@@ -4,7 +4,7 @@ import { WS_CODE } from "@/constants/apiUrl";
 import cachedKeys from "@/constants/cachedKeys";
 import { statusMessages } from "@/constants/messages";
 import { exportFileBase64, requestBaseApi } from "@/helpers/common";
-import useGetLisPackage from "@/hooks/api/package/useGetListPackage";
+import useGetLisCategory from "@/hooks/api/package/useGetListCategory";
 import useFiltersHandler from "@/hooks/useFilters";
 import { PERMISSION_ENUM, STATUS_API } from "@/interfaces/enum";
 import LoadingPageService from "@/services/loadingPage";
@@ -18,12 +18,13 @@ import { toast } from "react-toastify";
 import { iconsSvg } from "../../components/icons-svg/index";
 import DetailPackage from "./detail";
 import { CheckRoleAction } from "@/helpers/function";
+import CreateCategory from "@/components/global/popup/children/Category/CreateCategory";
 
 interface SEARCH_PARAMS {
   id: string;
 }
 
-const ListPackage = () => {
+const ListCategory = () => {
   const [searchParams, setSearchParams] = useState<SEARCH_PARAMS | any>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,17 +40,19 @@ const ListPackage = () => {
   }, [location]);
 
   const { filters, handleChangePage, handlePagesize, reFetch } = useFiltersHandler({
-    page: params?.page ? Number(params?.page) - 1 : 0,
-    size: params?.size ? Number(params?.size) : 10,
+    // page: params?.page ? Number(params?.page) - 1 : 0,
+    limit: params?.size ? Number(params?.size) : 10,
   });
 
-  const { data } = useGetLisPackage(filters, cachedKeys.listPackage);
+  const { data } = useGetLisCategory(filters, cachedKeys.listPackage);
+
+  console.log(data, "fdsfdsfds");
 
   const renderColumnsRoles = () => {
     const columns: any = [
       {
-        title: "Mã gói cước",
-        dataIndex: "packageId",
+        title: "Id danh mục",
+        dataIndex: "_id",
         width: 150,
         align: "center",
         render: (value: string) => {
@@ -61,8 +64,8 @@ const ListPackage = () => {
         },
       },
       {
-        title: "Tên gói cước",
-        dataIndex: "packageName",
+        title: "Tên danh mục",
+        dataIndex: "name",
         width: 150,
         align: "center",
         render: (value: string) => {
@@ -73,36 +76,36 @@ const ListPackage = () => {
           );
         },
       },
-      // {
-      //   title: "Thời gian tạo",
-      //   dataIndex: "createTime",
-      //   width: 150,
-      //   render: (value: string) => moment(value).format(typeDate.mmddyyyy),
-      //   align: "center",
-      // },
       {
-        title: "Dữ liệu",
-        dataIndex: "data",
+        title: "Icon danh mục",
+        dataIndex: "image",
         align: "center",
         width: 80,
         render: (value: string) => {
           return (
             <Tooltip placement="topLeft" title={value}>
-              {value}
+              <img src={value} alt="" className="w-10 h-10" />
             </Tooltip>
           );
         },
       },
       {
-        title: "Giá",
-        dataIndex: "price",
+        title: "Miêu tả",
+        dataIndex: "description",
         width: 80,
         render: (value: string) => value,
         align: "center",
       },
       {
-        title: "Tiền tệ",
-        dataIndex: "currency",
+        title: "Thời gian tạo",
+        dataIndex: "createdAt",
+        width: 80,
+        render: (value: string) => value,
+        align: "center",
+      },
+      {
+        title: "Thời gian cập nhật",
+        dataIndex: "updatedAt",
         width: 80,
         render: (value: string) => value,
         align: "center",
@@ -126,59 +129,17 @@ const ListPackage = () => {
     }
     return columns;
   };
-  const onSyncPackage = async () => {
-    const body = {
-      ...requestBaseApi({ wsCode: WS_CODE.SYNC_PACKAGE }),
-      wsRequest: {},
-    };
-    try {
-      LoadingPageService.instance.current.open();
-
-      const res = await PackageServices.sync(body);
-      if (res.data.result.errorCode === STATUS_API.SUCCESS) {
-        toast.success("Đồng bộ gói cước thành công");
-        reFetch();
-      } else {
-        toast.error(res.data.result.message ?? "Đồng bộ gói cước thất bại");
-      }
-    } catch {
-    } finally {
-      LoadingPageService.instance.current.close();
-    }
-  };
-
-  const onExportPackage = async () => {
-    const body = {
-      ...requestBaseApi({ wsCode: WS_CODE.EXPORT_PACKAGE }),
-      wsRequest: null,
-    };
-    try {
-      LoadingPageService.instance.current.open();
-      //@ts-ignore
-      const res = await PackageServices.export(body);
-      exportFileBase64(res.data.result.wsResponse.file, "");
-      if (res.data.result.errorCode === STATUS_API.SUCCESS) {
-        toast.success(statusMessages.exportSuccess);
-      } else {
-        toast.error(res.data.result.message ?? statusMessages.exportFail);
-      }
-    } catch {
-    } finally {
-      LoadingPageService.instance.current.close();
-    }
-  };
-
-  const onImport = () => {
+  const createCategory = () => {
     PopupService.instance.current.open({
       visible: true,
-      content: <ImportPackage />,
-      title: "Tải file excel",
+      content: <CreateCategory />,
+      title: "Thêm danh mục",
     });
   };
 
   return (
     <div>
-      <h2 className="title-page">{searchParams?.id ? "Cập nhật gói cước" : "Danh sách gói cước"}</h2>
+      <h2 className="title-page">{searchParams?.id ? "Cập nhật danh mục" : "Danh sách danh mục"}</h2>
       {searchParams?.id ? (
         <>
           <DetailPackage id={searchParams?.id} />
@@ -187,23 +148,17 @@ const ListPackage = () => {
         <>
           <CommonComponent.ContainerBox>
             <div className="flex justify-end gap-x-3 mb-5">
-              {CheckRoleAction([PERMISSION_ENUM.SYSTEMADMIN]) && (
-                <CommonComponent.Button type={"primary"} icon={<iconsSvg.Sync />} onClick={onSyncPackage}>
-                  Đồng bộ gói cước
-                </CommonComponent.Button>
-              )}
-              {CheckRoleAction([PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS]) && (
-                <CommonComponent.ExportButton onClick={onExportPackage} />
-              )}
-              {CheckRoleAction([PERMISSION_ENUM.SYSTEMADMIN]) && <CommonComponent.ImportButton onClick={onImport} />}
+              <CommonComponent.Button type={"primary"} icon={<iconsSvg.Sync />} onClick={createCategory}>
+                Thêm danh mục
+              </CommonComponent.Button>
             </div>
             <div className="">
               <CommonComponent.Table
                 columns={renderColumnsRoles()}
-                data={data?.packages}
-                page={filters.page}
-                pageSize={filters.size}
-                total={data?.total ?? 20}
+                data={data?.data ?? []}
+                page={filters.page ?? 0}
+                pageSize={filters.limit}
+                total={data?.total ?? 0}
                 onChangePage={(page) => handleChangePage(page)}
                 onChangePageSize={handlePagesize}
               />
@@ -215,4 +170,4 @@ const ListPackage = () => {
   );
 };
 
-export default ListPackage;
+export default ListCategory;

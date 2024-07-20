@@ -1,6 +1,8 @@
 import { PaginationParams, RequestCommon, ResponseCommon } from "@/interfaces/common";
 import { AxiosResponse } from "axios";
 import httpServices from "../httpServices";
+import { apiUrl } from "@/constants/apiUrl";
+import queryString from "query-string";
 
 export interface RequestListPackage extends PaginationParams {}
 
@@ -64,25 +66,48 @@ export type ResponseSyncPackage = AxiosResponse<ResponseCommon<{}>>;
 export type ResponseExportPackage = AxiosResponse<ResponseCommon<{ file: string }>>;
 export type ResponseImportPackage = AxiosResponse<ResponseCommon<{ file: string }>>;
 
-class PackageServices {
-  getAll(body: RequestCommon<RequestListPackage>): Promise<ResponseGetAllPackage> {
-    return httpServices.post(``, body);
-  }
-  getDetail(body: RequestCommon<RequestDetailPackage>): Promise<ResponseDetailPackageInfo> {
-    return httpServices.post(``, body);
-  }
-  sync(body: RequestCommon<{}>): Promise<ResponseSyncPackage> {
-    return httpServices.post(``, body);
-  }
-  export(body: RequestCommon<{}>): Promise<ResponseExportPackage> {
-    return httpServices.post(``, body);
-  }
-  import(body: RequestCommon<RequestImportPackage>): Promise<ResponseSyncPackage> {
-    return httpServices.post(``, body);
-  }
-  update(body: RequestCommon<RequestUpdatePackage>): Promise<ResponseSyncPackage> {
-    return httpServices.post(``, body);
-  }
+export interface RequestListCategory {
+  limit: number;
+}
+export interface RequestCreateCategory {
+  name: string;
+  image: [];
+  description: string;
+}
+export interface ResponListCategory {
+  _id: string;
+  name: string;
+  image: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export default new PackageServices();
+export interface ResponseCategory<> {
+  total: number;
+  data: ResponListCategory[];
+}
+export type Respon = AxiosResponse<ResponseCategory>;
+
+class CategoryServices {
+  getAllCategory(body: RequestListCategory): Promise<Respon> {
+    return httpServices.get(`${apiUrl.LISCATEGORY}?${queryString.stringify(body)}`);
+  }
+  createCategory(body: RequestCreateCategory): Promise<any> {
+    return httpServices.post(apiUrl.LISCATEGORY, body);
+  }
+  // sync(body: RequestCommon<{}>): Promise<ResponseSyncPackage> {
+  //   return httpServices.post(``, body);
+  // }
+  // export(body: RequestCommon<{}>): Promise<ResponseExportPackage> {
+  //   return httpServices.post(``, body);
+  // }
+  // import(body: RequestCommon<RequestImportPackage>): Promise<ResponseSyncPackage> {
+  //   return httpServices.post(``, body);
+  // }
+  // update(body: RequestCommon<RequestUpdatePackage>): Promise<ResponseSyncPackage> {
+  //   return httpServices.post(``, body);
+  // }
+}
+
+export default new CategoryServices();

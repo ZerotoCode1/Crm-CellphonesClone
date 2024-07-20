@@ -75,7 +75,7 @@ const items: CustomMenuItem[] = [
     children: [
       {
         key: BaseRoute.ManagementOrderInformationEsim,
-        label: "Tất cả đơn hàng (eSim)",
+        label: "Tất cả đơn hàng",
       },
       {
         key: BaseRoute.ManagementOrderInformationEsimError,
@@ -102,7 +102,7 @@ const items: CustomMenuItem[] = [
     roles: PERMISSION_ALL,
     children: [
       {
-        label: "Liên hệ skyfi",
+        label: "Liên hệ Cellphones",
         key: BaseRoute.ContactsSkyfi,
       },
       {
@@ -110,43 +110,43 @@ const items: CustomMenuItem[] = [
         key: BaseRoute.News,
       },
       {
-        label: "Quản lý thiết bị",
+        label: "Quản lý banner",
         key: BaseRoute.DeviceManagement,
       },
     ],
   },
 
   {
-    key: BaseRoute.ListPackage,
+    key: BaseRoute.Category,
     icon: <iconsSvg.Package color="#707070" />,
-    label: "Danh sách gói cước",
+    label: "Quản lý danh mục",
     roles: [PERMISSION_ENUM.SALEOPS, PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS],
   },
   {
     key: BaseRoute.ListSoldEsim,
     icon: <iconsSvg.SimCard color="#707070" />,
-    label: "Danh sách Esim đã bán",
+    label: "Quản lý sản phẩm",
     roles: PERMISSION_ALL,
   },
   {
     key: BaseRoute.ListExchangeRate,
     icon: <iconsSvg.Payment color="#707070" />,
-    label: "Danh sách tỷ giá",
+    label: "Quản lý kho",
     roles: [PERMISSION_ENUM.SYSTEMOPS, PERMISSION_ENUM.SYSTEMADMIN],
   },
   {
     key: "sub3",
-    label: "Quản lý đối soát",
+    label: "Quản lý thanh toán",
     icon: <iconsSvg.ControlManager color="#707070" />,
     roles: [PERMISSION_ENUM.SALEOPS, PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS],
     children: [
       {
         key: BaseRoute.Gpay,
-        label: "Gpay",
+        label: "VnPay",
       },
       {
         key: BaseRoute.Airalo,
-        label: "Airalo",
+        label: "Momo",
       },
     ],
   },

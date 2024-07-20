@@ -2,23 +2,11 @@ import { RequestCommon, ResponseCommon } from "@/interfaces/common";
 import { STATUS } from "@/interfaces/enum";
 import { AxiosResponse } from "axios";
 import httpServices from "../httpServices";
+import { apiUrl } from "@/constants/apiUrl";
+import queryString from "query-string";
 
-export interface RequestListOrderEsim {
-  countryCode: string;
-  customerEmail: string;
-  customerName: string;
-  departureCode: string;
-  destinationCode: string;
-  orderCodeAiralo: string;
-  orderCodeSkyfi: string;
-  orderCodeThirdParty: string;
-  packageName: string;
-  //no trim
-  appCode: string;
-  page: number;
-  size: number;
-  startTime: string;
-  endTime: string;
+export interface RequestListProduct {
+  limit: number;
 }
 
 export interface RequestDetailOrderEsim {
@@ -124,21 +112,21 @@ export type ResponseDetailOrderEsimSold = AxiosResponse<ResponseCommon<InfoDetai
 export type ResponseRetryorderEsimError = AxiosResponse<ResponseCommon<{}>>;
 
 class OrderEsimsServices {
-  getAll(body: RequestCommon<RequestListOrderEsim>): Promise<Response> {
-    return httpServices.post(``, body);
+  getAll(body: RequestListProduct): Promise<Response> {
+    return httpServices.get(`${apiUrl.PRODUCT}?${queryString.stringify(body)}`);
   }
-  getAllEsimSold(body: RequestCommon<RequestListOrderEsim>): Promise<Response> {
-    return httpServices.post(``, body);
-  }
-  getDetail(body: RequestCommon<RequestDetailOrderEsim>): Promise<ResponseDetailOrderEsim> {
-    return httpServices.post(``, body);
-  }
-  getDetailEsimSold(body: RequestCommon<RequestDetailOrderEsimSold>): Promise<ResponseDetailOrderEsimSold> {
-    return httpServices.post(``, body);
-  }
-  retryOrderEsimError(body: RequestCommon<{ orderIds: number[] }>): Promise<ResponseRetryorderEsimError> {
-    return httpServices.post(``, body);
-  }
+  // getAllEsimSold(body: RequestCommon<RequestListOrderEsim>): Promise<Response> {
+  //   return httpServices.post(``, body);
+  // }
+  // getDetail(body: RequestCommon<RequestDetailOrderEsim>): Promise<ResponseDetailOrderEsim> {
+  //   return httpServices.post(``, body);
+  // }
+  // getDetailEsimSold(body: RequestCommon<RequestDetailOrderEsimSold>): Promise<ResponseDetailOrderEsimSold> {
+  //   return httpServices.post(``, body);
+  // }
+  // retryOrderEsimError(body: RequestCommon<{ orderIds: number[] }>): Promise<ResponseRetryorderEsimError> {
+  //   return httpServices.post(``, body);
+  // }
 }
 
 export default new OrderEsimsServices();

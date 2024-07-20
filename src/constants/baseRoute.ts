@@ -7,7 +7,7 @@ export const path = {
   portalManagement: "/portal-management",
   contactSkyfi: "/contact-skyfi",
   deviceManagement: "/device-management",
-  listPackage: "/list-package",
+  category: "/category",
   listSoldEsim: "/list-sold-esim",
   listExchangeRate: "/list-exchange-rate",
   controlManagement: "/control-management",
@@ -32,7 +32,7 @@ export const BaseRoute = {
   ContactsSkyfi: `${path.portalManagement}${path.contactSkyfi}`,
   DeviceManagement: `${path.portalManagement}${path.deviceManagement}`,
   //
-  ListPackage: path.listPackage,
+  Category: path.category,
   //
   ListSoldEsim: path.listSoldEsim,
   //

@@ -147,8 +147,8 @@ const appRoutes: RouteType[] = [
   },
   {
     id: 6,
-    path: BaseRoute.ListPackage,
-    displayText: "Danh sách gói cước",
+    path: BaseRoute.Category,
+    displayText: "Quản lý danh mục",
     Icon: iconsSvg.Package,
     isChild: false,
     roles: [PERMISSION_ENUM.SALEOPS, PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS],
@@ -156,7 +156,7 @@ const appRoutes: RouteType[] = [
   {
     id: 7,
     path: BaseRoute.ListSoldEsim,
-    displayText: "Danh sách Esim đã bán",
+    displayText: "Danh sách sản phẩm",
     Icon: iconsSvg.SimCard,
     isChild: false,
     roles: PERMISSION_ALL,

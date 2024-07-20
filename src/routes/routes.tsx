@@ -79,8 +79,8 @@ const routes: Route[] = [
         component: withCheckRole(AccountManagerment, [PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS]),
       },
       {
-        name: "List Package",
-        path: BaseRoute.ListPackage,
+        name: "Category management",
+        path: BaseRoute.Category,
         component: withCheckRole(ListPackage, [PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS, PERMISSION_ENUM.SALEOPS]),
       },
       {

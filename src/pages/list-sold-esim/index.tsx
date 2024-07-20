@@ -22,6 +22,7 @@ import Label from "@/components/common-component/form/label";
 import { optionsAppCode } from "@/mocks";
 import { CheckRoleAction } from "@/helpers/function";
 import { PERMISSION_ENUM } from "@/interfaces/enum";
+import useGetListProduct from "@/hooks/api/Product/useGetListProDuct";
 
 // interface DataType {
 //   customerName: React.Key;
@@ -66,11 +67,10 @@ const ListEsimSold = () => {
   const params = queryString.parse(location.search);
 
   const { filters, handleChangePage, handleAddParams, handlePagesize } = useFiltersHandler({
-    page: params?.page ? Number(params?.page) - 1 : 0,
-    size: params?.size ? Number(params?.size) : 10,
+    // page: params?.page ? Number(params?.page) - 1 : 0,
+    limit: params?.size ? Number(params?.size) : 10,
   });
-  const { data } = useGetListEsimSold(filters, cachedKeys.listEsimSold);
-
+  const { data } = useGetListProduct(filters, cachedKeys.listProduct);
   const [form] = Form.useForm();
   const values = form.getFieldsValue();
   const navigate = useNavigate();
@@ -87,8 +87,8 @@ const ListEsimSold = () => {
 
   const columns: any = [
     {
-      title: "Mã đơn hàng",
-      dataIndex: "orderCode",
+      title: "Mã sản phẩm",
+      dataIndex: "_id",
       width: 200,
       align: "center",
       sorter: (a: any, b: any) => a.orderCode.localeCompare(b.orderCode),
@@ -101,8 +101,8 @@ const ListEsimSold = () => {
       },
     },
     {
-      title: "Mã đơn hàng VJA",
-      dataIndex: "orderCodeThirdParty",
+      title: "Tên sản phẩm",
+      dataIndex: "productName",
       width: 200,
       align: "center",
       sorter: (a: any, b: any) => a?.orderCodeThirdParty?.localeCompare(b?.orderCodeThirdParty),
@@ -115,54 +115,22 @@ const ListEsimSold = () => {
       },
     },
     {
-      title: "Mã đơn hàng Airalo",
-      dataIndex: "orderCodeAiralo",
+      title: "Ảnh",
+      dataIndex: "image",
       width: 200,
       align: "center",
       sorter: (a: any, b: any) => a.orderCodeAiralo.localeCompare(b.orderCodeAiralo),
       render: (value: string) => {
         return (
           <Tooltip placement="topLeft" title={value}>
-            {value}
+            <img src={value} height={40} width={40} />
           </Tooltip>
         );
       },
     },
     {
-      title: "ICCID",
-      dataIndex: "iccid",
-      width: 200,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <Tooltip placement="topLeft" title={value}>
-            {value}
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: "Giá đơn hàng",
+      title: "Giá",
       dataIndex: "price",
-      width: 100,
-      align: "center",
-    },
-    {
-      title: "Đơn vị tiền tệ đơn hàng",
-      dataIndex: "currency",
-      width: 150,
-      align: "center",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "createTime",
-      width: 200,
-      align: "center",
-      render: (value: string) => value,
-    },
-    {
-      title: "Mã gói cước Airalo",
-      dataIndex: "packageId",
       width: 200,
       align: "center",
       render: (value: string) => {
@@ -174,61 +142,28 @@ const ListEsimSold = () => {
       },
     },
     {
-      title: "Ngày hết hạn gói cước",
-      dataIndex: "expiredAt",
+      title: "Mô tả",
+      dataIndex: "description",
+      width: 100,
+      align: "center",
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "category_id",
+      width: 150,
+      align: "center",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
       width: 200,
       align: "center",
       render: (value: string) => value,
     },
     {
-      title: "Quốc gia",
-      dataIndex: "countryCode",
-      width: 100,
-      align: "center",
-    },
-    {
-      title: "Điểm đi",
-      dataIndex: "departureCode",
-      width: 100,
-      align: "center",
-    },
-    {
-      title: "Điểm đến",
-      dataIndex: "destinationCode",
-      width: 100,
-      align: "center",
-    },
-    {
-      title: "Tên khách hàng",
-      dataIndex: "customerName",
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
       width: 200,
-      align: "center",
-      sorter: (a: any, b: any) => a.customerName.localeCompare(b.customerName),
-      render: (value: string) => {
-        return (
-          <Tooltip placement="topLeft" title={value}>
-            {value}
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: "Email khách hàng",
-      dataIndex: "customerEmail",
-      width: 250,
-      align: "center",
-      sorter: (a: any, b: any) => a.customerEmail.localeCompare(b.customerEmail),
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "customerPhone",
-      width: 170,
-      align: "center",
-    },
-    {
-      title: "Mã thành viên SkyJoy",
-      dataIndex: "skyjoyMember",
-      width: 150,
       align: "center",
       render: (value: string) => {
         return (
@@ -237,32 +172,6 @@ const ListEsimSold = () => {
           </Tooltip>
         );
       },
-    },
-    {
-      title: "Đơn vị tiền tệ Airalo",
-      dataIndex: "currencyAiralo",
-      width: 150,
-      align: "center",
-    },
-    {
-      title: fieldsTable.price.label,
-      dataIndex: "netPrice",
-      width: 100,
-      align: "center",
-    },
-
-    {
-      title: "Số lượng",
-      dataIndex: "quantity",
-      width: 100,
-      align: "center",
-    },
-    {
-      title: "Kênh bán",
-      dataIndex: "appCode",
-      render: (value: string) => value,
-      align: "center",
-      width: 150,
     },
     {
       fixed: "right",
@@ -351,7 +260,7 @@ const ListEsimSold = () => {
       ) : (
         <>
           <ContainerBox>
-            <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed}>
+            {/* <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed}>
               <div className="flex items-end gap-x-2">
                 {filtersSearch.map((item, index) => {
                   return (
@@ -423,11 +332,11 @@ const ListEsimSold = () => {
                   )}
                 </div>
               </div>
-            </Form>
+            </Form> */}
             <div className="mt-6">
               <CommonComponent.Table
                 columns={columns}
-                data={data?.orderCRMResList}
+                data={data?.data ?? []}
                 page={filters.page}
                 pageSize={filters.size}
                 total={data?.total ?? 20}

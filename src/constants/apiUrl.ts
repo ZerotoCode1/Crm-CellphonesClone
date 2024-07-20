@@ -49,3 +49,9 @@ export const WS_CODE = {
   DETAIL_ESIM_SOLD: "detail",
   RETRY_ORDER_ESIM_ERROR: "retry-orders",
 };
+
+export const apiUrl = {
+  LOGIN: "login",
+  LISCATEGORY: "category",
+  PRODUCT: "product",
+};

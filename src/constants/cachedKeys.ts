@@ -7,7 +7,7 @@ const cachedKeys = {
   listNews: "listNews",
   listPackage: "listPackage",
   listExchangeRate: "listExchangeRate",
-  gpay: "gpay",
+  listProduct: "listProduct",
   airalo: "airalo",
   device: "device",
   listEsimSold: "listEsimSold",

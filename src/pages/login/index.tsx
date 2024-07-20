@@ -27,18 +27,18 @@ const Login = () => {
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     try {
       setLoading(true);
-      const res = await authService.login({ username: values.username ?? "", password: values.password ?? "" });
-      if (values.remember) {
-        setCookie(COOKIE_KEY.ACCOUNT, JSON.stringify(values), 30);
-      } else {
-        deleteCookie(COOKIE_KEY.ACCOUNT);
-      }
-      if (res.data.wsResponse) {
+      const res = await authService.login({ mail: values.username ?? "", password: values.password ?? "" });
+      // if (values.remember) {
+      //   setCookie(COOKIE_KEY.ACCOUNT, JSON.stringify(values), 30);
+      // } else {
+      //   deleteCookie(COOKIE_KEY.ACCOUNT);
+      // }
+      if (res.data.status === 1) {
         toast.success("Đăng nhập thành công");
-        login({ userInfos: res.data.wsResponse, token: res.data.wsResponse.token });
+        login({ userInfos: res.data, token: res.data.accessToken });
         navigate(BaseRoute.Homepage);
       } else {
-        toast.error(res.data.message);
+        toast.error("Đăng nhập thất bại");
       }
     } catch {
     } finally {

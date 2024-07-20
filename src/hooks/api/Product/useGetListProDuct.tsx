@@ -1,9 +1,9 @@
-import OrderEsimsServices, { DataListOrderEsim, RequestListProduct } from "@/services/esim/listOrderEsim.service";
+import ProductServices, { RequestListProduct, ResponListProduct } from "@/services/Product/product.service";
 import { useSave } from "@/stores/useStores";
 import { useEffect, useState } from "react";
 
-const useGetListEsimSold = (filters: RequestListProduct, refetchKey: string) => {
-  const [data, setData] = useState<DataListOrderEsim>();
+const useGetListProduct = (filters: RequestListProduct, refetchKey: string) => {
+  const [data, setData] = useState<ResponListProduct>();
 
   const save = useSave();
 
@@ -12,8 +12,8 @@ const useGetListEsimSold = (filters: RequestListProduct, refetchKey: string) => 
       ...filters,
     };
     try {
-      const res = await OrderEsimsServices.getAll(body);
-      setData(res.data.result.wsResponse);
+      const res = await ProductServices.getAll(body);
+      setData(res.data);
     } catch {
     } finally {
     }
@@ -29,4 +29,4 @@ const useGetListEsimSold = (filters: RequestListProduct, refetchKey: string) => 
 
   return { data };
 };
-export default useGetListEsimSold;
+export default useGetListProduct;
