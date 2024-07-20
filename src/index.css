@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: #dddddd;
+    --border-error: red;
+
+    --input: #d1d5db;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  .focus-input {
+    @apply outline-none border-blue-400 border-[2px];
+  }
+  .overlay {
+    @apply fixed bottom-0 left-0 right-0 top-0 flex h-screen w-full items-center justify-center bg-black/20 z-[1000];
+  }
+  .title-page {
+    @apply text-[20px] font-semibold uppercase text-[#333] mb-4;
+  }
+  .btn_login {
+    @apply hover:bg-[#ef1717] !important;
+  }
+}
+
+.menu-bar{
+  border: none !important;
+}
+.menu-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+.ant-menu-inline-collapsed {
+  width: 80px !important;
+  /* hoặc bất kỳ giá trị nào bạn muốn */
+  transition: width 0.3s ease-in-out;
+}
