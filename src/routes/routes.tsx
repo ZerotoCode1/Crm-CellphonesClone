@@ -15,8 +15,8 @@ const CustomerManagerment = lazy(() => import("../pages/customer-management"));
 const AccountManagerment = lazy(() => import("../pages/account-management"));
 const ContactSkyfi = lazy(() => import("../pages/contact-skyfi"));
 const DeviceManagement = lazy(() => import("../pages/device-management"));
-const ListPackage = lazy(() => import("../pages/list-package"));
-const ListSoldEsim = lazy(() => import("../pages/list-sold-esim"));
+const ListPackage = lazy(() => import("../pages/listcategory"));
+const ListProduct = lazy(() => import("../pages/listproduct"));
 const ListExchangeRate = lazy(() => import("../pages/list-exchange-rate"));
 const Gpay = lazy(() => import("../pages/gpay"));
 const Airalo = lazy(() => import("../pages/airalo"));
@@ -85,8 +85,8 @@ const routes: Route[] = [
       },
       {
         name: "List Sold Esim",
-        path: BaseRoute.ListSoldEsim,
-        component: withCheckRole(ListSoldEsim, PERMISSION_ALL),
+        path: BaseRoute.ListProduct,
+        component: withCheckRole(ListProduct, PERMISSION_ALL),
       },
       {
         name: "List Exchange Rate",

@@ -24,7 +24,7 @@ const useGetListProduct = (filters: RequestListProduct, refetchKey: string) => {
   }, [filters]);
 
   useEffect(() => {
-    save(refetchKey, fetch);
+    save(refetchKey, data);
   }, [save, refetchKey, fetch]);
 
   return { data };

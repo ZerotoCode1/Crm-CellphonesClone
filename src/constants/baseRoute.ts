@@ -8,7 +8,7 @@ export const path = {
   contactSkyfi: "/contact-skyfi",
   deviceManagement: "/device-management",
   category: "/category",
-  listSoldEsim: "/list-sold-esim",
+  listproduct: "/listproduct",
   listExchangeRate: "/list-exchange-rate",
   controlManagement: "/control-management",
   gpay: "/gpay",
@@ -34,7 +34,7 @@ export const BaseRoute = {
   //
   Category: path.category,
   //
-  ListSoldEsim: path.listSoldEsim,
+  ListProduct: path.listproduct,
   //
   ListExchangeRate: path.listExchangeRate,
   //

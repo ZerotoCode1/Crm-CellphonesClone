@@ -1,7 +1,7 @@
 export const fieldsTable = {
   customerName: {
-    label: "Tên khách hàng",
-    fieldName: "customerName",
+    label: "Tên sản phẩm",
+    fieldName: "productName",
   },
   customerEmail: {
     label: "Email khách hàng",

@@ -3,7 +3,7 @@ import Label from "@/components/common-component/form/label";
 import { WS_CODE } from "@/constants/apiUrl";
 import { BaseRoute } from "@/constants/baseRoute";
 import { requestBaseApi } from "@/helpers/common";
-import useGetDetailPackageInfo from "@/hooks/api/package/useDetailPackageInfo";
+import useGetDetailPackageInfo from "@/hooks/api/Category/useDetailPackageInfo";
 import { STATUS, STATUS_API } from "@/interfaces/enum";
 import LoadingPageService from "@/services/loadingPage";
 import PackageServices from "@/services/package/package.service";

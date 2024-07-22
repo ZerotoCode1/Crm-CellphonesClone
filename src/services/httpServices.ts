@@ -35,6 +35,18 @@ class Services {
         return Promise.reject(error);
       }
     );
+    this.axios.interceptors.request.use(
+      function (config) {
+        if (config.headers) {
+          // Do something before request is sent
+          config.headers.Authorization = `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN)}`;
+        }
+        return config;
+      },
+      function (error) {
+        return Promise.reject(error);
+      }
+    );
   }
 
   attachTokenToHeader(token: string) {
@@ -42,7 +54,7 @@ class Services {
       function (config) {
         if (config.headers) {
           // Do something before request is sent
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers.Authorization = `Bearer ${token || localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN)}`;
         }
         return config;
       },

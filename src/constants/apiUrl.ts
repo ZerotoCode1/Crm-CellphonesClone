@@ -52,6 +52,8 @@ export const WS_CODE = {
 
 export const apiUrl = {
   LOGIN: "login",
-  LISCATEGORY: "category",
+  LISTCATEGORY: "category",
+  CATEGORYID: "categoryId",
   PRODUCT: "product",
+  PRODUCTBYID: "productId",
 };

@@ -1,8 +1,12 @@
 import { CommonComponent } from "@/components/common-component";
 import LoadingPageService from "@/services/loadingPage";
 import PopupService from "@/services/popupPage";
-import { Form } from "antd";
+import { Button, Form, Upload } from "antd";
 import CategoryServices, { RequestCreateCategory } from "@/services/package/package.service";
+import { useState } from "react";
+import { UploadOutlined } from "@ant-design/icons";
+import { useGet } from "@/stores/useStores";
+import { toast } from "react-toastify";
 
 type FieldType = {
   name?: string;
@@ -14,24 +18,31 @@ const CreateCategory = () => {
     PopupService.instance.current.close();
   };
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState<any>([]);
+  const refetch = useGet("ListCategory");
 
   const onFinish = async (value: RequestCreateCategory) => {
     const formData = new FormData();
-
-    //    const body = {
-    //      ...requestBaseApi({ wsCode: WS_CODE.UPDATE_PASSWORD }),
-    //      wsRequest: {
-    //        ...values,
-    //        userId: accountInfo.userId,
-    //      },
-    //    };
-    //    LoadingPageService.instance.current.open();
+    formData.append("name", value.name);
+    formData.append("description", value.description);
+    if (fileList.length > 0) {
+      formData.append("image", fileList[0].originFileObj);
+    }
     try {
-      const res = await CategoryServices.createCategory(value);
+      LoadingPageService.instance.current.open();
+      //@ts-ignore
+      const res = await CategoryServices.createCategory(formData);
+      toast.success("Tạo danh mục thành công!");
+      refetch();
     } catch {
+      toast.error("Tạo danh mục thất bại!");
     } finally {
+      PopupService.instance.current.close();
       LoadingPageService.instance.current.close();
     }
+  };
+  const onUploadChange = ({ fileList }: { fileList: any }) => {
+    setFileList(fileList);
   };
   return (
     <div className="mt-5">
@@ -67,19 +78,21 @@ const CreateCategory = () => {
           <CommonComponent.Input title={"Mô tả danh mục"} placeholder={"Nhập mô tả danh mục"} />
         </Form.Item>
         <Form.Item<FieldType>
-          name={"description"}
+          name={"image"}
           rules={[
             {
               required: true,
               message: "Vui lòng tải ảnh lên!",
             },
-            {
-              whitespace: true,
-              message: "Vui lòng nhập dữ liệu!",
-            },
           ]}
         >
-          {/* <CommonComponent.UploadImage setFileList={setFileList} fileList={fileList} name="imageVi" /> */}
+          <Upload
+            fileList={fileList}
+            onChange={onUploadChange}
+            beforeUpload={() => false} // Prevent automatic upload
+          >
+            <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+          </Upload>
         </Form.Item>
         <div className="flex justify-center gap-x-2">
           <CommonComponent.Button onClick={onCancel} style={{ padding: "12px 30px" }}>

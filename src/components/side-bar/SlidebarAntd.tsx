@@ -123,7 +123,7 @@ const items: CustomMenuItem[] = [
     roles: [PERMISSION_ENUM.SALEOPS, PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS],
   },
   {
-    key: BaseRoute.ListSoldEsim,
+    key: BaseRoute.ListProduct,
     icon: <iconsSvg.SimCard color="#707070" />,
     label: "Quản lý sản phẩm",
     roles: PERMISSION_ALL,

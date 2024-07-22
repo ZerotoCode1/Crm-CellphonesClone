@@ -1,48 +1,29 @@
 import { CommonComponent } from "@/components/common-component";
 import ContainerBox from "@/components/common-component/ContainerBox";
+import Label from "@/components/common-component/form/label";
 import { WS_CODE } from "@/constants/apiUrl";
 import cachedKeys from "@/constants/cachedKeys";
 import { fieldsTable } from "@/constants/fieldsTable";
 import { exportFileBase64, requestBaseApi } from "@/helpers/common";
 import { DATE_FORMAT_V2_END, DATE_FORMAT_V2_START } from "@/helpers/date";
-import useGetListEsimSold from "@/hooks/api/order-esim/useGetListEsimSold";
+import { CheckRoleAction } from "@/helpers/function";
+import useGetListProduct from "@/hooks/api/Product/useGetListProDuct";
 import useFiltersHandler from "@/hooks/useFilters";
+import { PERMISSION_ENUM } from "@/interfaces/enum";
+import { optionsAppCode } from "@/mocks";
 import FileServices from "@/services/file/file.service";
 import LoadingPageService from "@/services/loadingPage";
 import type { FormProps } from "antd";
 import { Button, Form, Tooltip } from "antd";
-import dayjs from "dayjs";
 import moment from "moment";
 import queryString from "query-string";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { iconsSvg } from "../../components/icons-svg/index";
-import DetailOrderEsimSold from "./detail";
-import Label from "@/components/common-component/form/label";
-import { optionsAppCode } from "@/mocks";
-import { CheckRoleAction } from "@/helpers/function";
-import { PERMISSION_ENUM } from "@/interfaces/enum";
-import useGetListProduct from "@/hooks/api/Product/useGetListProDuct";
-
-// interface DataType {
-//   customerName: React.Key;
-//   customerEmail: string;
-//   orderCodeSkyfi: number;
-//   address: string;
-//   orderCodeVja2: string;
-//   countryCode: string;
-//   departureCode: string;
-//   destinationCode: string;
-//   price: string;
-//   quantity: string;
-//   appCode: string;
-//   createTime: string;
-//   orderStatus: string;
-//   paymentStatus: string;
-// }
+import DetailProduct from "./detail";
 
 type FieldType = {
-  customerName?: string;
+  productName?: string;
   customerEmail?: string;
   startTime?: string;
   endTime?: string;
@@ -181,7 +162,7 @@ const ListEsimSold = () => {
       width: 100,
       render: (_: any, record: any) => (
         <div className="flex justify-center">
-          <iconsSvg.Eye onClick={() => navigate(`${location.pathname}?id=${record?.iccid}`)} />
+          <iconsSvg.Eye onClick={() => navigate(`${location.pathname}?id=${record?._id}`)} />
         </div>
       ),
     },
@@ -195,19 +176,19 @@ const ListEsimSold = () => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const body = {
-      customerName: values?.customerName ? values?.customerName.trim() : "",
-      customerEmail: values?.customerEmail ? values?.customerEmail.trim() : "",
-      orderCodeSkyfi: values?.orderCodeSkyfi ? values?.orderCodeSkyfi.trim() : "",
-      orderCodeThirdParty: values?.orderCodeThirdParty ? values?.orderCodeThirdParty.trim() : "",
-      countryCode: values?.countryCode ? values?.countryCode.trim() : "",
-      departureCode: values?.departureCode ? values?.departureCode.trim() : "",
-      destinationCode: values?.destinationCode ? values?.destinationCode.trim() : "",
-      orderCodeAiralo: values?.orderCodeAiralo ? values?.orderCodeAiralo.trim() : "",
-      //no trim
-      page: 0,
-      appCode: values?.appCode ?? "",
-      startTime: values?.startTime ? dayjs(values.startTime).format(DATE_FORMAT_V2_START) : null,
-      endTime: values.endTime ? dayjs(values.endTime).format(DATE_FORMAT_V2_END) : null,
+      productName: values?.productName ? values?.productName.trim() : "",
+      // customerEmail: values?.customerEmail ? values?.customerEmail.trim() : "",
+      // orderCodeSkyfi: values?.orderCodeSkyfi ? values?.orderCodeSkyfi.trim() : "",
+      // orderCodeThirdParty: values?.orderCodeThirdParty ? values?.orderCodeThirdParty.trim() : "",
+      // countryCode: values?.countryCode ? values?.countryCode.trim() : "",
+      // departureCode: values?.departureCode ? values?.departureCode.trim() : "",
+      // destinationCode: values?.destinationCode ? values?.destinationCode.trim() : "",
+      // orderCodeAiralo: values?.orderCodeAiralo ? values?.orderCodeAiralo.trim() : "",
+      // //no trim
+      // page: 0,
+      // appCode: values?.appCode ?? "",
+      // startTime: values?.startTime ? dayjs(values.startTime).format(DATE_FORMAT_V2_START) : null,
+      // endTime: values.endTime ? dayjs(values.endTime).format(DATE_FORMAT_V2_END) : null,
     };
     handleAddParams(body);
     console.log("Success:", values);
@@ -252,15 +233,15 @@ const ListEsimSold = () => {
 
   return (
     <div>
-      <h2 className="title-page">{searchParams?.id ? "Chi tiết Esim" : "Danh sách esim đã bán"}</h2>
+      <h2 className="title-page">{searchParams?.id ? "Chi tiết sản phẩm" : "Danh sách sản phẩm"}</h2>
       {searchParams?.id ? (
         <>
-          <DetailOrderEsimSold id={searchParams?.id} />
+          <DetailProduct id={searchParams?.id} />
         </>
       ) : (
         <>
           <ContainerBox>
-            {/* <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed}>
+            <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed}>
               <div className="flex items-end gap-x-2">
                 {filtersSearch.map((item, index) => {
                   return (
@@ -332,14 +313,15 @@ const ListEsimSold = () => {
                   )}
                 </div>
               </div>
-            </Form> */}
+            </Form>
             <div className="mt-6">
               <CommonComponent.Table
                 columns={columns}
                 data={data?.data ?? []}
                 page={filters.page}
-                pageSize={filters.size}
-                total={data?.total ?? 20}
+                pageSize={filters.limit}
+                //@ts-ignore
+                total={data?.totalCount < 10 ? 10 : data?.totalCount ?? 10}
                 onChangePage={(page) => handleChangePage(page)}
                 onChangePageSize={handlePagesize}
               />

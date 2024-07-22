@@ -4,7 +4,7 @@ import { WS_CODE } from "@/constants/apiUrl";
 import cachedKeys from "@/constants/cachedKeys";
 import { statusMessages } from "@/constants/messages";
 import { exportFileBase64, requestBaseApi } from "@/helpers/common";
-import useGetLisCategory from "@/hooks/api/package/useGetListCategory";
+import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
 import useFiltersHandler from "@/hooks/useFilters";
 import { PERMISSION_ENUM, STATUS_API } from "@/interfaces/enum";
 import LoadingPageService from "@/services/loadingPage";
@@ -19,6 +19,7 @@ import { iconsSvg } from "../../components/icons-svg/index";
 import DetailPackage from "./detail";
 import { CheckRoleAction } from "@/helpers/function";
 import CreateCategory from "@/components/global/popup/children/Category/CreateCategory";
+import DeleteCategory from "@/components/global/popup/children/Category/DeleteCategory";
 
 interface SEARCH_PARAMS {
   id: string;
@@ -44,7 +45,7 @@ const ListCategory = () => {
     limit: params?.size ? Number(params?.size) : 10,
   });
 
-  const { data } = useGetLisCategory(filters, cachedKeys.listPackage);
+  const { data } = useGetLisCategory(filters, cachedKeys.ListCategory);
 
   console.log(data, "fdsfdsfds");
 
@@ -120,14 +121,22 @@ const ListCategory = () => {
         width: 80,
         render: (_: any, record: any) => {
           return (
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-4">
               <iconsSvg.Edit onClick={() => navigate(`${location.pathname}?id=${record?.packageId}`)} />
+              <iconsSvg.Delete onClick={() => deleteCategory(record?._id, record?.imageName)} />
             </div>
           );
         },
       });
     }
     return columns;
+  };
+  const deleteCategory = (id: string, imagename: string) => {
+    PopupService.instance.current.open({
+      visible: true,
+      content: <DeleteCategory imageName={imagename} id={id} />,
+      title: "Xoá danh mục",
+    });
   };
   const createCategory = () => {
     PopupService.instance.current.open({

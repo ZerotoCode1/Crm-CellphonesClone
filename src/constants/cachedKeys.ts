@@ -5,7 +5,7 @@ const cachedKeys = {
   listAccount: "listAccount",
   listContact: "listContact",
   listNews: "listNews",
-  listPackage: "listPackage",
+  ListCategory: "listCategory",
   listExchangeRate: "listExchangeRate",
   listProduct: "listProduct",
   airalo: "airalo",
