@@ -1,25 +1,18 @@
 import { CommonComponent } from "@/components/common-component";
-import ImportPackage from "@/components/global/popup/children/ImportPackage";
-import { WS_CODE } from "@/constants/apiUrl";
+import CreateCategory from "@/components/global/popup/children/Category/CreateCategory";
+import DeleteCategory from "@/components/global/popup/children/Category/DeleteCategory";
 import cachedKeys from "@/constants/cachedKeys";
-import { statusMessages } from "@/constants/messages";
-import { exportFileBase64, requestBaseApi } from "@/helpers/common";
+import { CheckRoleAction } from "@/helpers/function";
 import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
 import useFiltersHandler from "@/hooks/useFilters";
-import { PERMISSION_ENUM, STATUS_API } from "@/interfaces/enum";
-import LoadingPageService from "@/services/loadingPage";
-import PackageServices from "@/services/package/package.service";
+import { PERMISSION_ENUM } from "@/interfaces/enum";
 import PopupService from "@/services/popupPage";
 import { Tooltip } from "antd";
 import queryString from "query-string";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { iconsSvg } from "../../components/icons-svg/index";
 import DetailPackage from "./detail";
-import { CheckRoleAction } from "@/helpers/function";
-import CreateCategory from "@/components/global/popup/children/Category/CreateCategory";
-import DeleteCategory from "@/components/global/popup/children/Category/DeleteCategory";
 
 interface SEARCH_PARAMS {
   id: string;
@@ -41,14 +34,10 @@ const ListCategory = () => {
   }, [location]);
 
   const { filters, handleChangePage, handlePagesize, reFetch } = useFiltersHandler({
-    // page: params?.page ? Number(params?.page) - 1 : 0,
+    offset: params?.page ? (Number(params?.page) - 1) * 10 : 0,
     limit: params?.size ? Number(params?.size) : 10,
   });
-
   const { data } = useGetLisCategory(filters, cachedKeys.ListCategory);
-
-  console.log(data, "fdsfdsfds");
-
   const renderColumnsRoles = () => {
     const columns: any = [
       {
@@ -85,7 +74,9 @@ const ListCategory = () => {
         render: (value: string) => {
           return (
             <Tooltip placement="topLeft" title={value}>
-              <img src={value} alt="" className="w-10 h-10" />
+              <div className="w-full flex justify-center">
+                <img src={value} alt="" className="w-10 h-10" />
+              </div>
             </Tooltip>
           );
         },
@@ -122,7 +113,7 @@ const ListCategory = () => {
         render: (_: any, record: any) => {
           return (
             <div className="flex justify-center gap-4">
-              <iconsSvg.Edit onClick={() => navigate(`${location.pathname}?id=${record?.packageId}`)} />
+              <iconsSvg.Edit onClick={() => createCategory("edit", record?._id)} />
               <iconsSvg.Delete onClick={() => deleteCategory(record?._id, record?.imageName)} />
             </div>
           );
@@ -138,11 +129,11 @@ const ListCategory = () => {
       title: "Xoá danh mục",
     });
   };
-  const createCategory = () => {
+  const createCategory = (type: "edit" | "create", id?: string) => {
     PopupService.instance.current.open({
       visible: true,
-      content: <CreateCategory />,
-      title: "Thêm danh mục",
+      content: <CreateCategory type={type} id={id} />,
+      title: type === "edit" ? "Cập nhật danh mục" : "Thêm danh mục",
     });
   };
 
@@ -157,7 +148,7 @@ const ListCategory = () => {
         <>
           <CommonComponent.ContainerBox>
             <div className="flex justify-end gap-x-3 mb-5">
-              <CommonComponent.Button type={"primary"} icon={<iconsSvg.Sync />} onClick={createCategory}>
+              <CommonComponent.Button type={"primary"} icon={<iconsSvg.Sync />} onClick={() => createCategory("create")}>
                 Thêm danh mục
               </CommonComponent.Button>
             </div>
@@ -165,9 +156,9 @@ const ListCategory = () => {
               <CommonComponent.Table
                 columns={renderColumnsRoles()}
                 data={data?.data ?? []}
-                page={filters.page ?? 0}
-                pageSize={filters.limit}
-                total={data?.total ?? 0}
+                page={Number(filters.offset) ?? 0}
+                pageSize={Number(filters.limit) ?? 10}
+                total={Number(data?.totalCount) ?? 0}
                 onChangePage={(page) => handleChangePage(page)}
                 onChangePageSize={handlePagesize}
               />

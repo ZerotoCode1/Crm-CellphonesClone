@@ -1,9 +1,11 @@
 import { CommonComponent } from "@/components/common-component";
-import Label from "@/components/common-component/form/label";
 import useGetDetailProduct from "@/hooks/api/Product/useGetDetailProduct";
-import { Form, Input } from "antd";
+import CategoryServices, { ResponListCategory } from "@/services/package/package.service";
+import ProductServices from "@/services/Product/product.service";
+
+import { Form, UploadFile } from "antd";
 import queryString from "query-string";
-import { dateMoment, typeDate } from "../../../helpers/date";
+import { useEffect, useState } from "react";
 
 interface Props {
   id: string;
@@ -13,85 +15,73 @@ const DetailProduct = (_props: Props) => {
   const pathParams = queryString.parse(location.search);
   const id = pathParams?.id as string;
   const { dataDetail } = useGetDetailProduct(id);
+  const [option, setOption] = useState<any>([]);
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const filters = {};
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await CategoryServices.getAllCategory(filters);
+      const options = res.data.data.map((item: ResponListCategory) => {
+        return {
+          label: item.name,
+          value: item._id,
+        };
+      });
+      setOption(options);
+    };
+    fetch();
+  }, []);
+  useEffect(() => {
+    setFileList([
+      {
+        uid: "-1",
+        name: "image.png",
+        status: "done",
+        url: dataDetail?.image,
+      },
+    ]);
+  }, [dataDetail?.image]);
+  console.log(fileList, "fsfsdsdf");
+  const onsubmit = async (values: any) => {
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (key !== "image") {
+        formData.append(key, value as string);
+      }
+    });
+    formData.append("inStore", "true");
+    //@ts-ignore
+    formData.append("image[]", fileList[0].originFileObj);
+    try {
+      const res = await ProductServices.createProduct(formData);
+    } catch (error) {}
+  };
   return (
     <div>
       {dataDetail && (
-        <Form form={form} initialValues={dataDetail}>
+        <Form form={form} initialValues={dataDetail} onFinish={onsubmit}>
           <div className="grid grid-cols-4 gap-x-2">
             {inputList.map((item, index) => (
               <div key={index} className="">
                 <Form.Item name={item.name}>
-                  <CommonComponent.Input title={item.name} allowClear={false} readOnly />
+                  <CommonComponent.Input title={item.label} allowClear={false} />
                 </Form.Item>
               </div>
             ))}
-            {/* <div className="">
-              <Form.Item name="_id">
-                <CommonComponent.Input title={"Mã iccid"} allowClear={false} />
-              </Form.Item>
-            </div>
-            <div className="">
-              <Form.Item name="price">
-                <CommonComponent.Input title={"Mã qrcode"} allowClear={false} readOnly />
-              </Form.Item>
-            </div>
-            <div className="">
-              <CommonComponent.Input title={"Lpa"} value={dataDetail?.price} allowClear={false} readOnly />
-            </div>
-            <div className="">
-              <CommonComponent.Input title={"Dữ liệu tổng"} value={dataDetail?.productName} allowClear={false} readOnly />
-            </div> */}
+            <Form.Item name={"category_id"}>
+              <CommonComponent.Select options={option} placeholder="Danh mục sản phẩm" title="Danh mục sản phẩm" />
+            </Form.Item>
+            <Form.Item name={"image"}>
+              <CommonComponent.UploadImage setFileList={setFileList} fileList={fileList} />
+            </Form.Item>
           </div>
-          {/* <div className="grid grid-cols-4 gap-x-2 mt-5">
-          <div className="">
-            <CommonComponent.Input title={"Dữ liệu còn lại"} value={dataDetail?.dataUsage.remaining} allowClear={false} readOnly />
+          <div className="flex justify-center gap-x-2">
+            <CommonComponent.Button htmlType="submit" type={"primary"} style={{ padding: "12px 40px" }}>
+              Lưu
+            </CommonComponent.Button>
           </div>
-          <div className="">
-            <CommonComponent.Input
-              title={"Thời gian hết hạn"}
-              value={dateMoment.convertDate(dataDetail?.lastUpdateDataUsage ?? "", typeDate.yyyymmhhmmss, typeDate.ddmmyyyyhhmmss)}
-              allowClear={false}
-              readOnly
-            />
-          </div>
-          <div className="">
-            <CommonComponent.Input title={"Tổng cuộc gọi"} value={dataDetailOrder?.dataUsage.totalVoice} allowClear={false} readOnly />
-          </div>
-          <div className="">
-            <CommonComponent.Input title={"Cuộc gọi còn lại"} value={dataDetailOrder?.dataUsage.remainingVoice} allowClear={false} readOnly />
-          </div>
-        </div>
-        <div className="grid grid-cols-4 gap-x-2 mt-5">
-          <div className="">
-            <CommonComponent.Input title={"Tổng số tin nhắn"} value={dataDetailOrder?.dataUsage.totalText} allowClear={false} readOnly />
-          </div>
-          <div className="">
-            <CommonComponent.Input title={"Tổng tin nhắn còn lại"} value={dataDetailOrder?.dataUsage.remainingSms} allowClear={false} readOnly />
-          </div>
-          <div className="">
-            <CommonComponent.Input
-              title={"Lần cuối cập nhật"}
-              value={dateMoment.convertDate(dataDetailOrder?.lastUpdateDataUsage ?? "", typeDate.yyyymmdd, typeDate.ddmmyyyy)}
-              allowClear={false}
-              readOnly
-            />
-          </div>
-          <div className="">
-            <CommonComponent.Input
-              title={"Trạng thái"}
-              value={dataDetailOrder?.status === "ACTIVE" ? "Hoạt động" : "Đã khoá"}
-              allowClear={false}
-              readOnly
-            />
-          </div>
-        </div>
-        <div className="mt-5">
-          <Label title={"Mã QR"} />
-          <div className="">
-            <img src={dataDetailOrder?.qrcodeUrl} alt="" className="w-[25%]" />
-          </div>
-        </div> */}
         </Form>
       )}
     </div>
@@ -102,34 +92,27 @@ export default DetailProduct;
 type typeInput = {
   type: "input" | "select" | "date" | "image";
   name: string;
+  label: string;
 };
 const inputList: typeInput[] = [
   {
     type: "input",
-    name: "_id",
-  },
-  {
-    type: "input",
     name: "productName",
+    label: "Tên sản phẩm",
   },
   {
     type: "input",
     name: "price",
-  },
-  {
-    type: "input",
-    name: "image",
+    label: "Giá",
   },
   {
     type: "input",
     name: "description",
-  },
-  {
-    type: "select",
-    name: "category_id",
+    label: "Mô tả",
   },
   {
     type: "input",
     name: "status",
+    label: "Trạng thái",
   },
 ];

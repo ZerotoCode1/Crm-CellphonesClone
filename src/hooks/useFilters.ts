@@ -12,10 +12,10 @@ function useFiltersHandler(initialFilters: any) {
     setFilters((prev: object) => {
       return {
         ...prev,
-        page: page - 1,
+        offset: (page - 1) * 10,
       };
     });
-    navigate(`${location.pathname}?page=${page}&size=${filters.size || filters.pageSize}`);
+    navigate(`${location.pathname}?page=${page}&size=${filters.limit || filters.pageSize}`);
   };
 
   const handleChangePageDeleteTable = () => {
@@ -40,7 +40,7 @@ function useFiltersHandler(initialFilters: any) {
     setFilters((prev: object) => {
       return {
         ...prev,
-        page: 0,
+        // offset: 0,
         size: size,
       };
     });
@@ -50,7 +50,7 @@ function useFiltersHandler(initialFilters: any) {
     setFilters((prev: object) => {
       return {
         ...prev,
-        page: 0,
+        // offset: 0,
       };
     });
   };

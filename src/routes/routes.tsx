@@ -24,6 +24,7 @@ const ImportFile = lazy(() => import("../pages/import-file"));
 const News = lazy(() => import("../pages/news"));
 const CreateNews = lazy(() => import("../pages/news/create-news"));
 const NewsDetail = lazy(() => import("../pages/news/news-detail"));
+const CreateProduct = lazy(() => import("../pages/listproduct/createProDuct/CreateProduct"));
 
 interface Route {
   name: string;
@@ -107,6 +108,11 @@ const routes: Route[] = [
         name: "NewsDetail",
         path: BaseRoute.NewsDetail,
         component: withCheckRole(NewsDetail, PERMISSION_ALL),
+      },
+      {
+        name: "CreateProduct",
+        path: BaseRoute.CreateProduct,
+        component: withCheckRole(CreateProduct, PERMISSION_ALL),
       },
     ],
   },

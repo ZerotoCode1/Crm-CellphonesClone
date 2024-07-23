@@ -4,15 +4,16 @@ import { ILabel } from "../label/index";
 
 interface Props extends Omit<InputProps & ILabel, "input"> {
   classLabel?: string;
+  required?: boolean;
 }
 
 const Input = (props: Props) => {
-  const { classLabel, title, ...params } = props;
+  const { classLabel, title, required, ...params } = props;
 
   return (
     <>
       <div className="">
-        <Label title={title} required={props.required} />
+        <Label title={title} required={required} />
       </div>
       <InputAndt allowClear style={{ padding: "8px" }} {...params} />
     </>

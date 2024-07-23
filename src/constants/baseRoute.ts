@@ -1,3 +1,5 @@
+import { create } from "lodash";
+
 export const path = {
   managementOrderInformation: "/management-order-information",
   esim: "/esim",
@@ -13,6 +15,7 @@ export const path = {
   controlManagement: "/control-management",
   gpay: "/gpay",
   airalo: "/airalo",
+  createProduct: "/create-product",
 };
 
 export const BaseRoute = {
@@ -45,6 +48,7 @@ export const BaseRoute = {
   News: `${path.portalManagement}/news`,
   CreateNews: `${path.portalManagement}/news/create-news`,
   NewsDetail: `${path.portalManagement}/new/news-detail/:id`,
+  CreateProduct: path.createProduct,
 };
 export const RouterDynamic = {
   NewsDetail: `${path.portalManagement}/new/news-detail`,

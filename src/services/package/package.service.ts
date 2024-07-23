@@ -67,12 +67,18 @@ export type ResponseExportPackage = AxiosResponse<ResponseCommon<{ file: string 
 export type ResponseImportPackage = AxiosResponse<ResponseCommon<{ file: string }>>;
 
 export interface RequestListCategory {
-  limit: number;
+  limit?: number;
+  offset?: number;
+  _id?: string;
 }
+
 export interface RequestCreateCategory {
   name: string;
   image: File;
   description: string;
+}
+export interface RequestGetCategoryById {
+  _id: string;
 }
 export interface ResponListCategory {
   _id: string;
@@ -84,7 +90,7 @@ export interface ResponListCategory {
 }
 
 export interface ResponseCategory<> {
-  total: number;
+  totalCount: number;
   data: ResponListCategory[];
 }
 export type Respon = AxiosResponse<ResponseCategory>;
@@ -92,9 +98,16 @@ export interface RequestDelete {
   _id: string;
   imageName: string;
 }
+
 class CategoryServices {
   getAllCategory(body: RequestListCategory): Promise<Respon> {
     return httpServices.get(`${apiUrl.LISTCATEGORY}?${queryString.stringify(body)}`);
+  }
+  getCategoryById(body: RequestGetCategoryById): Promise<Respon> {
+    return httpServices.get(`${apiUrl.LISTCATEGORY}?${queryString.stringify(body)}`);
+  }
+  updateCategory(body: RequestCreateCategory): Promise<any> {
+    return httpServices.put(apiUrl.CATEGORYID, body);
   }
   createCategory(body: RequestCreateCategory): Promise<any> {
     return httpServices.post(apiUrl.LISTCATEGORY, body);

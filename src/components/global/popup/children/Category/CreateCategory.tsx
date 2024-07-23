@@ -2,24 +2,43 @@ import { CommonComponent } from "@/components/common-component";
 import LoadingPageService from "@/services/loadingPage";
 import PopupService from "@/services/popupPage";
 import { Button, Form, Upload } from "antd";
-import CategoryServices, { RequestCreateCategory } from "@/services/package/package.service";
-import { useState } from "react";
+import CategoryServices, { RequestCreateCategory, ResponListCategory } from "@/services/package/package.service";
+import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { useGet } from "@/stores/useStores";
 import { toast } from "react-toastify";
+import _ from "lodash";
 
 type FieldType = {
   name?: string;
   image?: string;
   description?: string;
 };
-const CreateCategory = () => {
+interface CategoryProps {
+  type: "edit" | "create";
+  id?: string;
+}
+const CreateCategory = (prop: CategoryProps) => {
+  const { type, id } = prop;
   const onCancel = () => {
     PopupService.instance.current.close();
   };
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<any>([]);
   const refetch = useGet("ListCategory");
+  useEffect(() => {
+    const fetchData = async () => {
+      if (type === "edit") {
+        const res = await CategoryServices.getCategoryById({ _id: id ?? "" });
+        form.setFieldsValue({
+          name: res.data.data[0].name,
+          description: res.data.data[0].description,
+          _id: res.data.data[0]._id,
+        });
+      }
+    };
+    fetchData();
+  }, [type]);
 
   const onFinish = async (value: RequestCreateCategory) => {
     const formData = new FormData();
@@ -30,12 +49,18 @@ const CreateCategory = () => {
     }
     try {
       LoadingPageService.instance.current.open();
-      //@ts-ignore
-      const res = await CategoryServices.createCategory(formData);
-      toast.success("Tạo danh mục thành công!");
-      refetch();
+      if (type === "edit") {
+        formData.append("_id", id ?? "");
+        //@ts-ignore
+        const res = await CategoryServices.updateCategory(formData);
+        toast.success("Cập nhật danh mục thành công!");
+      } else {
+        //@ts-ignore
+        const res = await CategoryServices.createCategory(formData);
+        toast.success("Tạo danh mục thành công!");
+      }
+      refetch && refetch();
     } catch {
-      toast.error("Tạo danh mục thất bại!");
     } finally {
       PopupService.instance.current.close();
       LoadingPageService.instance.current.close();
@@ -43,6 +68,7 @@ const CreateCategory = () => {
   };
   const onUploadChange = ({ fileList }: { fileList: any }) => {
     setFileList(fileList);
+    console.log(fileList, "fsdfdsfsd");
   };
   return (
     <div className="mt-5">

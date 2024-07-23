@@ -16,6 +16,7 @@ import SelectNoForm from "./form/select/SelectNoForm";
 import Table from "./table";
 import TabsCustom from "./tabs-common";
 import Switch from "./switch-common";
+import EditTableCell from "./EditTableCell";
 
 export const CommonComponent = {
   Container,
@@ -35,4 +36,5 @@ export const CommonComponent = {
   ExportButton,
   ImportButton,
   UploadFile,
+  EditTableCell,
 };
