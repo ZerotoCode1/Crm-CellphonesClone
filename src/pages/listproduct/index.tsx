@@ -105,7 +105,7 @@ const ListEsimSold = () => {
       render: (value: string) => {
         return (
           <Tooltip placement="topLeft" title={value} className="flex justify-center w-full">
-            <img src={value} height={40} width={40} />
+            <img src={value[0]} height={40} width={40} />
           </Tooltip>
         );
       },

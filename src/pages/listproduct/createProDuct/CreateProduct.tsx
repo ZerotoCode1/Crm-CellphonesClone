@@ -1,24 +1,33 @@
 import { CommonComponent } from "@/components/common-component";
+import { DataType } from "@/components/common-component/EditTableCell";
 import cachedKeys from "@/constants/cachedKeys";
 import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
+import useFiltersHandler from "@/hooks/useFilters";
+import httpServices from "@/services/httpServices";
+import LoadingPageService from "@/services/loadingPage";
+import ProductServices from "@/services/Product/product.service";
 import { Form, UploadFile } from "antd";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
-import ProductServices from "@/services/Product/product.service";
 import { toast } from "react-toastify";
-import useFiltersHandler from "@/hooks/useFilters";
-import LoadingPageService from "@/services/loadingPage";
-import { DataType } from "@/components/common-component/EditTableCell";
+import CreateColor from "./Children/CreateColor";
+import CreateVersion from "./Children/CreateVersion";
 
 const CreateProduct = () => {
   const [option, setOption] = useState<any>([]);
+  const [optionParameter, setOptionParameter] = useState<any>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
-  const [contentEn, setContentEn] = useState("");
-
+  const [content, setContent] = useState("");
+  const [version, setVersion] = useState<[{ id: 0; data: any; nameVersion: ""; priceVersion: ""; color: [""]; quannity: [{}] }]>([
+    { id: 0, data: dataSource, nameVersion: "", priceVersion: "", color: [""], quannity: [{}] },
+  ]);
+  const [image, setImage] = useState<any>({});
+  const [versionColor, setVersionColor] = useState<any>([]);
+  const [color, setColor] = useState<string[]>([]);
   const [form] = Form.useForm();
 
-  console.log(contentEn, "fsfsdfsdfd");
+  console.log(versionColor, "etretertret");
 
   const { filters } = useFiltersHandler({});
   const { data } = useGetLisCategory(filters, cachedKeys.ListCategory);
@@ -33,6 +42,20 @@ const CreateProduct = () => {
       setOption(options);
     }
   }, [data?.data]);
+
+  const handleChangeCategory = async (value: string) => {
+    try {
+      const res = await httpServices.get(`/parameter?categoryId=${value}`);
+      console.log(res.data, "fsdfds");
+      const data = res.data.map((item: any) => {
+        return {
+          value: item?.nameParameter,
+        };
+      });
+      setOptionParameter(data);
+    } catch (error) {}
+  };
+  console.log(fileList, "fileList");
   const onSubmit = async (values: any) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -40,10 +63,14 @@ const CreateProduct = () => {
         formData.append(key, value as string);
       }
     });
-    const listImage = fileList.map((item) => item.originFileObj);
     //@ts-ignore
-    formData.append("image[]", ...listImage);
+    fileList.map((item: any) => {
+      formData.append("image[]", item.originFileObj);
+    });
     formData.append("numberTechnical", JSON.stringify(dataSource));
+    formData.append("version", JSON.stringify(version));
+    formData.append("content", content);
+    formData.append("versionColor", JSON.stringify(versionColor));
     try {
       LoadingPageService.instance.current.open();
       const res = await ProductServices.createProduct(formData);
@@ -56,6 +83,8 @@ const CreateProduct = () => {
       LoadingPageService.instance.current.close();
     }
   };
+
+  console.log(versionColor, "versionColor");
   return (
     <div>
       <Form onFinish={onSubmit} form={form}>
@@ -70,7 +99,13 @@ const CreateProduct = () => {
             <CommonComponent.Input title={"Mô tả"} placeholder="Nhập mô tả" required />
           </Form.Item>
           <Form.Item name="category_id">
-            <CommonComponent.Select title="Danh mục" options={option} placeholder="Chọn danh mục" required />
+            <CommonComponent.Select
+              onChange={(e) => handleChangeCategory(e)}
+              title="Danh mục"
+              options={option}
+              placeholder="Chọn danh mục"
+              required
+            />
           </Form.Item>
           <Form.Item name="inStore">
             <CommonComponent.Select options={opTionInStore} title={"Trạng thái"} placeholder="Nhập trạng thái" required />
@@ -82,8 +117,17 @@ const CreateProduct = () => {
         <Form.Item>
           <CommonComponent.UploadImage fileList={fileList} setFileList={setFileList} />
         </Form.Item>
-        <CommonComponent.EditTableCell dataSource={dataSource} setDataSource={setDataSource} />
-        <CommonComponent.CKEditor5 form={form} name={"contentEn"} content={contentEn} setContent={setContentEn} />
+        <CreateColor
+          color={color}
+          setColor={setColor}
+          image={image}
+          setImage={setImage}
+          versionColor={versionColor}
+          setVersionColor={setVersionColor}
+        />
+        <CommonComponent.EditTableCell dataSource={dataSource} setDataSource={setDataSource} parameter={optionParameter} />
+        <CreateVersion optionColor={color} dataDefault={dataSource} dataSources={version} setDataSources={setVersion} />
+        <CommonComponent.CkEditorCustom setContent={setContent} />
         <div className="flex justify-center gap-x-2">
           <CommonComponent.Button htmlType="submit" type={"primary"} style={{ padding: "12px 40px" }}>
             Lưu

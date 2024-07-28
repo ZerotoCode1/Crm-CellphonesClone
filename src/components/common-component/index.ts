@@ -17,6 +17,7 @@ import Table from "./table";
 import TabsCustom from "./tabs-common";
 import Switch from "./switch-common";
 import EditTableCell from "./EditTableCell";
+import CkEditorCustom from "./Ck5";
 
 export const CommonComponent = {
   Container,
@@ -37,4 +38,5 @@ export const CommonComponent = {
   ImportButton,
   UploadFile,
   EditTableCell,
+  CkEditorCustom,
 };
