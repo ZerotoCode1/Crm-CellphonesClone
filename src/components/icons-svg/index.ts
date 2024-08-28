@@ -35,6 +35,7 @@ import SimCard from "./children/SimCard";
 import Sync from "./children/Sync";
 import User from "./children/User";
 import UserOutline from "./children/UserOutline";
+import Attribute from "./children/addtribu";
 import IconFilter from "./children/filter";
 import IconLock from "./children/lock";
 import Redo from "./children/redo";
@@ -82,4 +83,5 @@ export const iconsSvg = {
   Email,
   ArowLeft,
   ArowRight,
+  Attribute,
 };

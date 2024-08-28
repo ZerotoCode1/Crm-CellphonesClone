@@ -98,7 +98,13 @@ export interface RequestDelete {
   _id: string;
   imageName: string;
 }
-
+export interface RequestCreateAddtribute {
+  categoryId: string;
+  numberTechnical: any;
+}
+export interface RequestGetAddtribute {
+  categoryId: string;
+}
 class CategoryServices {
   getAllCategory(body: RequestListCategory): Promise<Respon> {
     return httpServices.get(`${apiUrl.LISTCATEGORY}?${queryString.stringify(body)}`);
@@ -114,6 +120,12 @@ class CategoryServices {
   }
   deleteCategory(body: RequestDelete): Promise<any> {
     return httpServices.delete(`${apiUrl.CATEGORYID}?${queryString.stringify(body)}`);
+  }
+  createAddtribute(body: RequestCreateAddtribute): Promise<any> {
+    return httpServices.post(apiUrl.ADDTRIBUTE, body);
+  }
+  getAddtribute(body: RequestGetAddtribute): Promise<any> {
+    return httpServices.get(`${apiUrl.GETSADDTRIBUTE}?${queryString.stringify(body)}`);
   }
   // sync(body: RequestCommon<{}>): Promise<ResponseSyncPackage> {
   //   return httpServices.post(``, body);

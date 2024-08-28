@@ -50,8 +50,8 @@ import "ckeditor5/ckeditor5.css";
 
 import "./index.css";
 
-const LICENSE_KEY = "T1dZQW5YbmFjSUlFVlBrSWJva0k5SVBqWVdUbVh3Qk1vbjVlMVROUjIwY1ZKcHVUb2Nsdm01cmx0cEdxUnc9PS1NakF5TkRBNE1UVT0=";
-const CKBOX_TOKEN_URL = "https://113743.cke-cs.com/token/dev/1780dab19cbd79f9de6c15a4b9f1077d7af840023a22b6460a85e075bd9e?limit=10";
+const LICENSE_KEY = "MkNIeTJzd3owS2ZOS3lQS1FMeHpOTmd2L3JYeW55OFhNNmkwSlAvOVppeUJPOUlLMnJJOGsxQnRmRmZkYnc9PS1NakF5TkRBNU1qRT0=";
+const CKBOX_TOKEN_URL = "https://113743.cke-cs.com/token/dev/c5c51978dfa492a696bb12d1dff7153e7fff9af32191ce034bbd729359d5?limit=10";
 
 interface CKEditorCustomProps {
   content?: string;
@@ -201,10 +201,12 @@ const CkEditorCustom = (prop: CKEditorCustomProps) => {
 
   return (
     <div>
-      <div className="main-container">
+      <div className="w-full">
         <div className="editor-container editor-container_classic-editor" ref={editorContainerRef}>
           <div className="editor-container__editor">
-            <div ref={editorRef}>{isLayoutReady && <CKEditor editor={ClassicEditor} config={editorConfig} onChange={handleChange} />}</div>
+            <div ref={editorRef}>
+              {isLayoutReady && <CKEditor editor={ClassicEditor} config={editorConfig} onChange={handleChange} data={content} />}
+            </div>
           </div>
         </div>
       </div>

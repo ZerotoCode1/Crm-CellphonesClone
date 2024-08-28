@@ -1,13 +1,12 @@
 import { CommonComponent } from "@/components/common-component";
 import LoadingPageService from "@/services/loadingPage";
+import CategoryServices, { RequestCreateCategory } from "@/services/package/package.service";
 import PopupService from "@/services/popupPage";
-import { Button, Form, Upload } from "antd";
-import CategoryServices, { RequestCreateCategory, ResponListCategory } from "@/services/package/package.service";
-import { useEffect, useState } from "react";
-import { UploadOutlined } from "@ant-design/icons";
 import { useGet } from "@/stores/useStores";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Upload } from "antd";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import _ from "lodash";
 
 type FieldType = {
   name?: string;

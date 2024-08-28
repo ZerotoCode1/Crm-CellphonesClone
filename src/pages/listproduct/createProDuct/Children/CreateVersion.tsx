@@ -6,12 +6,23 @@ import { useEffect, useState } from "react";
 
 interface Props {
   dataDefault: DataType[];
-  dataSources: [{ id: 0; data: any; nameVersion: ""; priceVersion: ""; color: [""]; quannity: [{}] }];
+  dataSources: [
+    {
+      [x: string]: any;
+      id: 0;
+      data: any;
+      nameVersion: "";
+      priceVersion: "";
+      color: [""];
+      quannity: [{}];
+    }
+  ];
   setDataSources: Function;
   optionColor: any[];
+  optionParameter: [];
 }
 const CreateVersion = (props: Props) => {
-  const { dataDefault, dataSources, setDataSources, optionColor } = props;
+  const { dataDefault, dataSources, setDataSources, optionColor, optionParameter } = props;
   // const [dataSources, setDataSources] = useState([{ id: 0, data: dataDefault, nameVersion: "", priceVersion: "", color: [""], priceColor: [{}] }]);
 
   const Option = optionColor.map((item) => {
@@ -64,25 +75,18 @@ const CreateVersion = (props: Props) => {
       })
     );
   };
-  console.log(dataSources, "dataSources");
+
   return (
     <div>
       <CommonComponent.Button onClick={handleAddversion} className="my-4 bg-[#e74f4f] text-[#fff]">
         Thêm phiên bản máy
       </CommonComponent.Button>
-      {dataDefault &&
-        dataSources.map((source, index) => (
-          <div className="p-5 rounded-[10px] mb-4" style={{ border: "1px solid #ccc" }}>
+      {dataSources.map((source, index) => {
+        const id = source._id;
+        return (
+          <div key={id} className="p-5 rounded-[10px] mb-4" style={{ border: "1px solid #ccc" }}>
             <div className="flex gap-4">
-              <Form.Item
-                name={`nameVersion${source.id}`}
-                rules={[
-                  {
-                    required: true,
-                    message: "Tên phiên bản không được để trống",
-                  },
-                ]}
-              >
+              <Form.Item name={`nameVersion${source.id}`}>
                 <CommonComponent.Input
                   title={"Tên phiên bản"}
                   defaultValue={source.nameVersion}
@@ -119,6 +123,8 @@ const CreateVersion = (props: Props) => {
                 return (
                   item && (
                     <CommonComponent.Input
+                      key={source.id}
+                      defaultValue={dataSources[index]?.quannity.find((i) => item in i)?.[item]}
                       onChange={(e) => hendleQuanniTyColor(source.id, e.target.value, item)}
                       title={`${item}:`}
                       style={{ width: "100px" }}
@@ -133,10 +139,12 @@ const CreateVersion = (props: Props) => {
                 dataSource={source.data}
                 setDataSource={(newData: DataType) => updateDataSource(source.id, newData)}
                 keyVersion={Math.random().toString()}
+                parameter={optionParameter}
               />
             </div>
           </div>
-        ))}
+        );
+      })}
     </div>
   );
 };

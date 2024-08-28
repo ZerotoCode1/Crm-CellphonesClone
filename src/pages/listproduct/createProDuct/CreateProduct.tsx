@@ -5,6 +5,7 @@ import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
 import useFiltersHandler from "@/hooks/useFilters";
 import httpServices from "@/services/httpServices";
 import LoadingPageService from "@/services/loadingPage";
+import CategoryServices from "@/services/package/package.service";
 import ProductServices from "@/services/Product/product.service";
 import { Form, UploadFile } from "antd";
 import { isEmpty } from "lodash";
@@ -15,6 +16,7 @@ import CreateVersion from "./Children/CreateVersion";
 
 const CreateProduct = () => {
   const [option, setOption] = useState<any>([]);
+  const [categoryId, setCategoryId] = useState("");
   const [optionParameter, setOptionParameter] = useState<any>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
@@ -27,11 +29,9 @@ const CreateProduct = () => {
   const [color, setColor] = useState<string[]>([]);
   const [form] = Form.useForm();
 
-  console.log(versionColor, "etretertret");
-
   const { filters } = useFiltersHandler({});
   const { data } = useGetLisCategory(filters, cachedKeys.ListCategory);
-  useEffect(() => {
+  const convertData = () => {
     if (!isEmpty(data?.data)) {
       const options = data?.data.map((item: any) => {
         return {
@@ -41,12 +41,28 @@ const CreateProduct = () => {
       });
       setOption(options);
     }
+  };
+  const getAddtribute = async () => {
+    try {
+      const res = await CategoryServices.getAddtribute({ categoryId });
+      if (!isEmpty(res?.data?.numberTechnical)) {
+        setDataSource(res.data?.numberTechnical);
+        //  setType(Type.edit);
+      }
+    } catch (error) {
+      console.log(error, "fsdfsdf");
+    }
+  };
+  useEffect(() => {
+    getAddtribute();
+  }, [categoryId]);
+  useEffect(() => {
+    convertData();
   }, [data?.data]);
-
   const handleChangeCategory = async (value: string) => {
+    setCategoryId(value);
     try {
       const res = await httpServices.get(`/parameter?categoryId=${value}`);
-      console.log(res.data, "fsdfds");
       const data = res.data.map((item: any) => {
         return {
           value: item?.nameParameter,
@@ -55,7 +71,6 @@ const CreateProduct = () => {
       setOptionParameter(data);
     } catch (error) {}
   };
-  console.log(fileList, "fileList");
   const onSubmit = async (values: any) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
@@ -83,8 +98,7 @@ const CreateProduct = () => {
       LoadingPageService.instance.current.close();
     }
   };
-
-  console.log(versionColor, "versionColor");
+  console.log(dataSource, "dataSource");
   return (
     <div>
       <Form onFinish={onSubmit} form={form}>
@@ -125,8 +139,13 @@ const CreateProduct = () => {
           versionColor={versionColor}
           setVersionColor={setVersionColor}
         />
-        <CommonComponent.EditTableCell dataSource={dataSource} setDataSource={setDataSource} parameter={optionParameter} />
-        <CreateVersion optionColor={color} dataDefault={dataSource} dataSources={version} setDataSources={setVersion} />
+        <CreateVersion
+          optionColor={color}
+          dataDefault={dataSource}
+          dataSources={version}
+          setDataSources={setVersion}
+          optionParameter={optionParameter}
+        />
         <CommonComponent.CkEditorCustom setContent={setContent} />
         <div className="flex justify-center gap-x-2">
           <CommonComponent.Button htmlType="submit" type={"primary"} style={{ padding: "12px 40px" }}>

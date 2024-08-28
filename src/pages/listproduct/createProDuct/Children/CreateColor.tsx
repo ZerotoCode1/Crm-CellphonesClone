@@ -14,8 +14,10 @@ interface Props {
 }
 const CreateColor = (props: Props) => {
   const { image, setImage, versionColor, setVersionColor, color, setColor } = props;
+  console.log(image, "image");
   const [nameColor, setNameColor] = useState<string>("");
   const handleAddColor = () => {
+    if (!nameColor) return;
     setColor([...color, nameColor]);
     setNameColor("");
   };
@@ -31,26 +33,27 @@ const CreateColor = (props: Props) => {
       }
     } catch (error) {}
   };
-
   return (
     <div>
-      <div className="flex">
+      <div className="flex items-center ">
+        <Label title="Tên màu" className="mr-6" />
         <CommonComponent.Input
           value={nameColor}
           onChange={(e) => setNameColor(e.target.value)}
-          title={"Tên màu"}
           placeholder="Nhập tên màu"
           style={{ width: "200px" }}
         />
-        <button onClick={handleAddColor} className="bg-[#872f2f]">
+        <p onClick={handleAddColor} className="bg-[#872f2f]">
           Thêm màu
-        </button>
+        </p>
       </div>
-      <div>
+      <div className="mt-5 gap-y-4">
         {color.map((item) => (
           <>
-            <div className="flex gap-4">
-              <Label title={item} />
+            <div className="flex items-center mb-[10px]">
+              <div className="w-[10%] h-full items-center flex">
+                <Label title={`${item}: `} />
+              </div>
               <Upload fileList={image[item] || []} onChange={(e) => onUploadChange(e.fileList, item)} beforeUpload={() => false}>
                 <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
               </Upload>
