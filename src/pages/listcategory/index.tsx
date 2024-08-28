@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { iconsSvg } from "../../components/icons-svg/index";
 import DetailPackage from "./detail";
+import CreateAddtribute from "@/components/global/popup/children/Category/CreateAddtribute";
 
 interface SEARCH_PARAMS {
   id: string;
@@ -115,12 +116,21 @@ const ListCategory = () => {
             <div className="flex justify-center gap-4">
               <iconsSvg.Edit onClick={() => createCategory("edit", record?._id)} />
               <iconsSvg.Delete onClick={() => deleteCategory(record?._id, record?.imageName)} />
+              <iconsSvg.Attribute onClick={() => handleAttribute(record?._id)} color="#ddd" />
             </div>
           );
         },
       });
     }
     return columns;
+  };
+  const handleAttribute = (categoryId: string) => {
+    PopupService.instance.current.open({
+      visible: true,
+      content: <CreateAddtribute categoryId={categoryId} />,
+      title: "Thêm mới thuộc tính",
+      styleContent: { width: "1000px" },
+    });
   };
   const deleteCategory = (id: string, imagename: string) => {
     PopupService.instance.current.open({

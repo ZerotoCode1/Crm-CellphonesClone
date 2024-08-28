@@ -105,7 +105,7 @@ const ListEsimSold = () => {
       render: (value: string) => {
         return (
           <Tooltip placement="topLeft" title={value} className="flex justify-center w-full">
-            <img src={value} height={40} width={40} />
+            <img src={value[0]} height={40} width={40} />
           </Tooltip>
         );
       },
@@ -164,7 +164,7 @@ const ListEsimSold = () => {
       render: (_: any, record: any) => (
         <div className="flex justify-center gap-4">
           <iconsSvg.Delete onClick={() => hanleDelete(record?._id, record?.image)} />
-          <iconsSvg.Edit onClick={() => navigate(`${location.pathname}?id=${record?._id}`)} />
+          <iconsSvg.Edit onClick={() => navigate(`${BaseRoute.EditProduct}?id=${record?._id}`)} />
         </div>
       ),
     },

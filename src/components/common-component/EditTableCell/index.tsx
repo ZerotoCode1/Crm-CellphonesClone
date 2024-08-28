@@ -109,9 +109,11 @@ type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
 interface Props {
   dataSource: DataType[];
   setDataSource: Function;
+  parameter?: [];
+  keyVersion?: string;
 }
 const Editable = (props: Props) => {
-  const { dataSource, setDataSource } = props;
+  const { dataSource, setDataSource, parameter, keyVersion } = props;
 
   const [count, setCount] = useState(2);
 
@@ -156,10 +158,11 @@ const Editable = (props: Props) => {
       dataIndex: "topic",
       render: (_, record) => (
         <AutoComplete
+          value={record.topic}
           style={{ width: 200 }}
-          options={options}
+          options={parameter ?? options}
           onChange={(e) => handleAddTopic(e, record.key)}
-          placeholder="try to type `b`"
+          placeholder="Chọn chủ đề"
           filterOption={(inputValue, option) => option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
         />
       ),
@@ -172,7 +175,7 @@ const Editable = (props: Props) => {
       render: (_, record) => (
         <>
           <div>
-            <Checkbox onChange={(e) => handleAddHightLight(e.target.checked, record.key)} />
+            <Checkbox onChange={(e) => handleAddHightLight(e.target.checked, record.key)} checked={record.representative} />
           </div>
         </>
       ),
@@ -193,9 +196,9 @@ const Editable = (props: Props) => {
 
   const handleAdd = () => {
     const newData: DataType = {
-      key: count,
-      technical: "gggg",
-      describe: "3200",
+      key: `${count}-${keyVersion}`,
+      technical: "Thống số mới",
+      describe: "mô tả thông số",
       topic: "chủ đề",
       representative: false,
     };

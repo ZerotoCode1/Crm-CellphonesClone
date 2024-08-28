@@ -16,6 +16,7 @@ export const path = {
   gpay: "/gpay",
   airalo: "/airalo",
   createProduct: "/create-product",
+  editProduct: "/edit-product",
 };
 
 export const BaseRoute = {
@@ -49,6 +50,7 @@ export const BaseRoute = {
   CreateNews: `${path.portalManagement}/news/create-news`,
   NewsDetail: `${path.portalManagement}/new/news-detail/:id`,
   CreateProduct: path.createProduct,
+  EditProduct: path.editProduct,
 };
 export const RouterDynamic = {
   NewsDetail: `${path.portalManagement}/new/news-detail`,

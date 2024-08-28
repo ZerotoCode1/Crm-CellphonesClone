@@ -56,4 +56,6 @@ export const apiUrl = {
   CATEGORYID: "categoryId",
   PRODUCT: "product",
   PRODUCTBYID: "productId",
+  ADDTRIBUTE: "createaddtribute",
+  GETSADDTRIBUTE: "getsaddtribute",
 };
