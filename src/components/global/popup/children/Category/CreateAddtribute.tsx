@@ -23,7 +23,7 @@ const CreateAddtribute = (prop: CreateAddtributeProps) => {
     try {
       const res = await CategoryServices.getAddtribute({ categoryId });
       if (res?.data?.numberTechnical) {
-        if (isEmpty(res.data?.numberTechnical)) {
+        if (!isEmpty(res.data?.numberTechnical)) {
           setDataSource(res.data?.numberTechnical);
           setType(Type.edit);
         }
@@ -62,6 +62,7 @@ const CreateAddtribute = (prop: CreateAddtributeProps) => {
     }
   };
   const handleEdit = async () => {};
+  console.log(dataSource, "dataSource");
   return (
     <div className="w-[100%] relative">
       <Button onClick={type === Type.create ? handleAdd : handleEdit} type="primary" className="mb-4 h-[45px] right-0 absolute">

@@ -3,13 +3,14 @@ import { DataType } from "@/components/common-component/EditTableCell";
 import Label from "@/components/common-component/form/label";
 import { Form, Select, Space } from "antd";
 import { useEffect, useState } from "react";
+import { Color } from "./CreateColor";
 
 interface Props {
   dataDefault: DataType[];
   dataSources: [
     {
       [x: string]: any;
-      id: 0;
+      id: number;
       data: any;
       nameVersion: "";
       priceVersion: "";
@@ -18,7 +19,7 @@ interface Props {
     }
   ];
   setDataSources: Function;
-  optionColor: any[];
+  optionColor: Color[];
   optionParameter: [];
 }
 const CreateVersion = (props: Props) => {
@@ -27,8 +28,8 @@ const CreateVersion = (props: Props) => {
 
   const Option = optionColor.map((item) => {
     return {
-      label: item,
-      value: item,
+      label: item?.name,
+      value: item?.name,
     };
   });
   console.log(Option, "optionColor");
@@ -82,7 +83,13 @@ const CreateVersion = (props: Props) => {
         Thêm phiên bản máy
       </CommonComponent.Button>
       {dataSources.map((source, index) => {
-        const id = source._id;
+        const id = source._id || source.id;
+        const optionValues = new Set(options.map((option) => option.label));
+
+        // Lọc defaultValue để chỉ giữ lại các giá trị có trong options
+        const filteredDefaultValue = source.color.filter((value) => optionValues.has(value));
+        console.log(filteredDefaultValue, "filteredDefaultValue");
+
         return (
           <div key={id} className="p-5 rounded-[10px] mb-4" style={{ border: "1px solid #ccc" }}>
             <div className="flex gap-4">
@@ -108,9 +115,11 @@ const CreateVersion = (props: Props) => {
                   placeholder="Chọn màu sắc"
                   onChange={(value) => handleChange(source.id, value)}
                   options={Option}
+                  // defaultValue={source.color}
+                  value={source.color}
                   optionRender={(option) => (
                     <Space>
-                      <span role="img" aria-label={option.data.label}>
+                      <span role="img" aria-label={option?.data?.label}>
                         {option.data.label}
                       </span>
                     </Space>
