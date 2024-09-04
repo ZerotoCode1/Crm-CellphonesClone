@@ -1,37 +1,51 @@
+"use client";
 import { CommonComponent } from "@/components/common-component";
 import Label from "@/components/common-component/form/label";
 import httpServices from "@/services/httpServices";
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, Upload } from "antd";
+import { CloseOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Image, Upload } from "antd";
 import { useState } from "react";
-interface Props {
+export type Color = {
+  name: string;
   image: any;
-  setImage: Function;
-  versionColor: any;
-  setVersionColor: Function;
-  color: string[];
+  nameImage: string;
+};
+interface Props {
+  color: Color[];
   setColor: Function;
+  setVersion: Function;
 }
 const CreateColor = (props: Props) => {
-  const { image, setImage, versionColor, setVersionColor, color, setColor } = props;
-  console.log(image, "image");
+  const { color, setColor, setVersion } = props;
   const [nameColor, setNameColor] = useState<string>("");
   const handleAddColor = () => {
     if (!nameColor) return;
-    setColor([...color, nameColor]);
+    setColor((pre: any) => [...pre, { name: nameColor }]);
     setNameColor("");
   };
 
   const onUploadChange = async (fileList: any, name: string) => {
-    setImage({ [name]: fileList });
     const formData = new FormData();
     formData.append("image", fileList[0].originFileObj);
     try {
       const res = await httpServices.post("/upLoadImage", formData);
       if (res.data) {
-        setVersionColor([...versionColor, { name, image: res.data.url, nameImage: res.data.name }]);
+        setColor((pre: any) => pre.map((item: any) => (item.name === name ? { ...item, image: res.data.url, nameImage: res.data.name } : item)));
       }
     } catch (error) {}
+  };
+  const onRemoveImage = (name: string) => {
+    setColor((pre: any) => pre.map((item: any) => (item.name === name ? { ...item, image: "" } : item)));
+  };
+  const onRemoveColor = (name: string) => {
+    setColor((pre: any) => pre.filter((item: any) => item.name !== name));
+    setVersion((pre: any) =>
+      pre.map((item: any) => ({
+        ...item,
+        color: item.color.filter((color: any) => color !== name),
+        quannity: item.quannity.filter((color: any) => color !== name),
+      }))
+    );
   };
   return (
     <div>
@@ -50,13 +64,25 @@ const CreateColor = (props: Props) => {
       <div className="mt-5 gap-y-4">
         {color.map((item) => (
           <>
-            <div className="flex items-center mb-[10px]">
-              <div className="w-[10%] h-full items-center flex">
-                <Label title={`${item}: `} />
+            <div className="flex items-center mb-[10px]" key={item.name}>
+              <div className="w-[5%] h-full items-center flex">
+                <Label title={`${item.name}: `} />
               </div>
-              <Upload fileList={image[item] || []} onChange={(e) => onUploadChange(e.fileList, item)} beforeUpload={() => false}>
-                <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
-              </Upload>
+              <div className="min-w-[100px]">
+                <Upload fileList={[]} onChange={(e) => onUploadChange(e.fileList, item?.name)}>
+                  {item?.image ? (
+                    <div style={{ position: "relative", display: "inline-block" }}>
+                      <Image src={item?.image} alt="" width={80} height={80} />
+                    </div>
+                  ) : (
+                    <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+                  )}
+                </Upload>
+              </div>
+              <div className="pl-4 gap-2 flex">
+                {item?.image && <Button icon={<DeleteOutlined />} onClick={() => onRemoveImage(item?.name)} />}
+                <Button icon={<CloseOutlined />} onClick={() => onRemoveColor(item?.name)} />
+              </div>
             </div>
           </>
         ))}

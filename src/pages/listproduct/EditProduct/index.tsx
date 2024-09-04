@@ -1,26 +1,32 @@
 import { CommonComponent } from "@/components/common-component";
-import { Form, UploadFile } from "antd";
-import CreateColor from "../createProDuct/Children/CreateColor";
-import CreateVersion from "../createProDuct/Children/CreateVersion";
-import { useLocation } from "react-router-dom";
-import useFiltersHandler from "@/hooks/useFilters";
-import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
+import { DataType } from "@/components/common-component/EditTableCell";
 import cachedKeys from "@/constants/cachedKeys";
+import useGetLisCategory from "@/hooks/api/Category/useGetListCategory";
+import useFiltersHandler from "@/hooks/useFilters";
+import httpServices from "@/services/httpServices";
+import ProductServices from "@/services/Product/product.service";
+import { Form, UploadFile } from "antd";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
-import httpServices from "@/services/httpServices";
-import { use } from "i18next";
-import { DataType } from "@/components/common-component/EditTableCell";
+import { useLocation } from "react-router-dom";
+import CreateColor, { Color } from "../createProDuct/Children/CreateColor";
+import CreateVersion from "../createProDuct/Children/CreateVersion";
 
+export type Version = {
+  id: number;
+  data: any;
+  nameVersion: string;
+  priceVersion: string;
+  color: string[];
+  quannity: [{}];
+};
 const Editproduct = () => {
   const id = new URLSearchParams(useLocation().search).get("id");
   const [form] = Form.useForm();
   const [option, setOption] = useState<any>([]);
   const [optionParameter, setOptionParameter] = useState<any>([]);
   const [content, setContent] = useState("");
-  const [image, setImage] = useState<any>({});
-  const [color, setColor] = useState<string[]>([]);
-  const [versionColor, setVersionColor] = useState<any>([]);
+  const [color, setColor] = useState<Color[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [version, setVersion] = useState<[{ id: 0; data: any; nameVersion: ""; priceVersion: ""; color: [""]; quannity: [{}] }]>([
     { id: 0, data: dataSource, nameVersion: "", priceVersion: "", color: [""], quannity: [{}] },
@@ -44,19 +50,11 @@ const Editproduct = () => {
   const getData = async () => {
     try {
       const res = await httpServices.get(`/product?_id=${id}`);
-      // if (res?.data?.data) {
-      //   const data = res.data?.data?.[0];
-      //   setDataProduct(res.data?.data?.[0]);
-      //   console.log(res?.data?.data, "fsfkdjs");
-      //   setVersionColor(res.data?.data?.[0]?.versionColor);
-      //   setColor
-      // }
       if (res?.data?.data) {
         const data = res.data?.data?.[0];
+        handleChangeCategory(data?.category_id);
         setDataProduct(data);
-        setVersionColor(data?.versionColor);
-        const optionColor = data?.versionColor?.map((item: any) => item.name);
-        setColor(optionColor);
+        setColor(data?.versionColor);
       }
     } catch (error) {}
   };
@@ -69,9 +67,9 @@ const Editproduct = () => {
   useEffect(() => {
     if (dataProduct && dataProduct?.image) {
       setFileList(
-        dataProduct?.image?.map((item: any) => {
+        dataProduct?.image?.map((item: any, index: number) => {
           return {
-            uid: "-1",
+            uid: index,
             name: "image.png",
             status: "done",
             url: item,
@@ -92,6 +90,7 @@ const Editproduct = () => {
       content: dataProduct?.content,
     });
   }, [dataProduct]);
+
   const handleChangeCategory = async (value: string) => {
     try {
       const res = await httpServices.get(`/parameter?categoryId=${value}`);
@@ -103,7 +102,27 @@ const Editproduct = () => {
       setOptionParameter(data);
     } catch (error) {}
   };
-  const onSubmit = async (values: any) => {};
+  const onSubmit = async (values: any) => {
+    const formData = new FormData();
+    formData.append("_id", "66d2f05bfeaa5246112183e8");
+    formData.append("category_id", values.category_id);
+    formData.append("productName", values.productName);
+    formData.append("price", values.price);
+    formData.append("description", values.description);
+    formData.append("inStore", values.inStore);
+    formData.append("status", values.status);
+    formData.append("content", content);
+    fileList.map((item: any) => {
+      formData.append("image[]", item.originFileObj);
+    });
+    formData.append("numberTechnical", JSON.stringify(dataSource));
+    formData.append("version", JSON.stringify(version));
+    formData.append("versionColor", JSON.stringify(color));
+    try {
+      const res = await ProductServices.updateProduct(formData);
+    } catch (error) {}
+  };
+  console.log(optionParameter, "rtyurtyrt");
   return (
     <div>
       <div>
@@ -137,14 +156,7 @@ const Editproduct = () => {
           <Form.Item>
             <CommonComponent.UploadImage fileList={fileList} setFileList={setFileList} />
           </Form.Item>
-          <CreateColor
-            color={color}
-            setColor={setColor}
-            image={image}
-            setImage={setImage}
-            versionColor={versionColor}
-            setVersionColor={setVersionColor}
-          />
+          <CreateColor color={color} setColor={setColor} setVersion={setVersion} />
           <CreateVersion
             optionColor={color}
             dataDefault={dataProduct?.numberTechnical ?? []}

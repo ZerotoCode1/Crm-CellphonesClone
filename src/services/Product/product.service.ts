@@ -44,7 +44,7 @@ class ProductServices {
     return httpServices.post(apiUrl.PRODUCT, body);
   }
   updateProduct(body: FormData): Promise<AxiosResponse<any>> {
-    return httpServices.post(apiUrl.PRODUCTBYID, body);
+    return httpServices.put(apiUrl.PRODUCTBYID, body);
   }
   deleteProduct(body: ResquesDeleteProduct): Promise<AxiosResponse<{ message: string }>> {
     return httpServices.delete(`${apiUrl.PRODUCTBYID}?${queryString.stringify(body)}`);

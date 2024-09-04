@@ -11,7 +11,7 @@ import { Form, UploadFile } from "antd";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import CreateColor from "./Children/CreateColor";
+import CreateColor, { Color } from "./Children/CreateColor";
 import CreateVersion from "./Children/CreateVersion";
 
 const CreateProduct = () => {
@@ -24,9 +24,7 @@ const CreateProduct = () => {
   const [version, setVersion] = useState<[{ id: 0; data: any; nameVersion: ""; priceVersion: ""; color: [""]; quannity: [{}] }]>([
     { id: 0, data: dataSource, nameVersion: "", priceVersion: "", color: [""], quannity: [{}] },
   ]);
-  const [image, setImage] = useState<any>({});
-  const [versionColor, setVersionColor] = useState<any>([]);
-  const [color, setColor] = useState<string[]>([]);
+  const [color, setColor] = useState<Color[]>([]);
   const [form] = Form.useForm();
 
   const { filters } = useFiltersHandler({});
@@ -85,7 +83,7 @@ const CreateProduct = () => {
     formData.append("numberTechnical", JSON.stringify(dataSource));
     formData.append("version", JSON.stringify(version));
     formData.append("content", content);
-    formData.append("versionColor", JSON.stringify(versionColor));
+    formData.append("versionColor", JSON.stringify(color));
     try {
       LoadingPageService.instance.current.open();
       const res = await ProductServices.createProduct(formData);
@@ -131,14 +129,7 @@ const CreateProduct = () => {
         <Form.Item>
           <CommonComponent.UploadImage fileList={fileList} setFileList={setFileList} />
         </Form.Item>
-        <CreateColor
-          color={color}
-          setColor={setColor}
-          image={image}
-          setImage={setImage}
-          versionColor={versionColor}
-          setVersionColor={setVersionColor}
-        />
+        <CreateColor color={color} setColor={setColor} setVersion={setVersion} />
         <CreateVersion
           optionColor={color}
           dataDefault={dataSource}
