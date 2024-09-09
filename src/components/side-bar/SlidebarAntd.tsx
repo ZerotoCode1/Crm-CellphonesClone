@@ -135,6 +135,12 @@ const items: CustomMenuItem[] = [
     roles: [PERMISSION_ENUM.SYSTEMOPS, PERMISSION_ENUM.SYSTEMADMIN],
   },
   {
+    key: BaseRoute.ShopManagement,
+    icon: <iconsSvg.Payment color="#707070" />,
+    label: "Quản lý cửa hàng",
+    roles: [PERMISSION_ENUM.SYSTEMOPS, PERMISSION_ENUM.SYSTEMADMIN],
+  },
+  {
     key: "sub3",
     label: "Quản lý thanh toán",
     icon: <iconsSvg.ControlManager color="#707070" />,

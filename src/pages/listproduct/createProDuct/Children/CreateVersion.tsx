@@ -2,7 +2,7 @@ import { CommonComponent } from "@/components/common-component";
 import { DataType } from "@/components/common-component/EditTableCell";
 import Label from "@/components/common-component/form/label";
 import { Form, Select, Space } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Color } from "./CreateColor";
 
 interface Props {
@@ -21,9 +21,10 @@ interface Props {
   setDataSources: Function;
   optionColor: Color[];
   optionParameter: [];
+  form?: any;
 }
 const CreateVersion = (props: Props) => {
-  const { dataDefault, dataSources, setDataSources, optionColor, optionParameter } = props;
+  const { dataDefault, dataSources, setDataSources, optionColor, optionParameter, form } = props;
   // const [dataSources, setDataSources] = useState([{ id: 0, data: dataDefault, nameVersion: "", priceVersion: "", color: [""], priceColor: [{}] }]);
 
   const Option = optionColor.map((item) => {
@@ -76,6 +77,28 @@ const CreateVersion = (props: Props) => {
       })
     );
   };
+  function calculateTotalQuantity(data: any) {
+    let totalQuantity = 0;
+
+    data.forEach((item: any) => {
+      item.quannity.forEach((q: any) => {
+        // Duyệt qua từng đối tượng trong quannity
+        for (let key in q) {
+          totalQuantity += parseInt(q[key], 10); // Chuyển giá trị về số nguyên và cộng dồn vào tổng
+        }
+      });
+    });
+
+    return totalQuantity;
+  }
+  useEffect(() => {
+    const quanity = calculateTotalQuantity(dataSources);
+    if (form) {
+      form.setFieldsValue({
+        quannityTotal: quanity,
+      });
+    }
+  }, [dataSources]);
 
   return (
     <div>

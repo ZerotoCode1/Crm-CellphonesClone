@@ -25,10 +25,12 @@ const CreateCategory = (prop: CategoryProps) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<any>([]);
   const refetch = useGet("ListCategory");
+  const [data, setDataProduct] = useState<any>([]);
   useEffect(() => {
     const fetchData = async () => {
       if (type === "edit") {
         const res = await CategoryServices.getCategoryById({ _id: id ?? "" });
+        setDataProduct(res.data.data[0]);
         form.setFieldsValue({
           name: res.data.data[0].name,
           description: res.data.data[0].description,
@@ -45,6 +47,8 @@ const CreateCategory = (prop: CategoryProps) => {
     formData.append("description", value.description);
     if (fileList.length > 0) {
       formData.append("image", fileList[0].originFileObj);
+    } else {
+      formData.append("image", data?.image);
     }
     try {
       LoadingPageService.instance.current.open();
@@ -104,12 +108,12 @@ const CreateCategory = (prop: CategoryProps) => {
         </Form.Item>
         <Form.Item<FieldType>
           name={"image"}
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng tải ảnh lên!",
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Vui lòng tải ảnh lên!",
+          //   },
+          // ]}
         >
           <Upload
             fileList={fileList}

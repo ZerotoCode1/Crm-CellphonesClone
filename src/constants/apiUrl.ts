@@ -58,4 +58,5 @@ export const apiUrl = {
   PRODUCTBYID: "productId",
   ADDTRIBUTE: "createaddtribute",
   GETSADDTRIBUTE: "getsaddtribute",
+  GETPAYMENT:"getDataPayment"
 };

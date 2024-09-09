@@ -125,6 +125,12 @@ const CreateProduct = () => {
           <Form.Item name="status">
             <CommonComponent.Select options={opTionStatus} title={"Trạng thái"} placeholder="Nhập trạng thái" required />
           </Form.Item>
+          <Form.Item name="quannityTotal">
+            <CommonComponent.Input title={"Số lượng"} placeholder="Số lượng" required disabled />
+          </Form.Item>
+          <Form.Item name="vdeo">
+            <CommonComponent.Input title={"Video giói thiệu"} placeholder="thêm link vdeo" required />
+          </Form.Item>
         </div>
         <Form.Item>
           <CommonComponent.UploadImage fileList={fileList} setFileList={setFileList} />
@@ -136,6 +142,7 @@ const CreateProduct = () => {
           dataSources={version}
           setDataSources={setVersion}
           optionParameter={optionParameter}
+          form={form}
         />
         <CommonComponent.CkEditorCustom setContent={setContent} />
         <div className="flex justify-center gap-x-2">

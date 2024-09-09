@@ -88,6 +88,8 @@ const Editproduct = () => {
       inStore: dataProduct?.inStore,
       status: String(dataProduct?.status),
       content: dataProduct?.content,
+      quannityTotal: dataProduct?.quannityTotal,
+      vdeo: dataProduct?.vdeo,
     });
   }, [dataProduct]);
 
@@ -104,7 +106,7 @@ const Editproduct = () => {
   };
   const onSubmit = async (values: any) => {
     const formData = new FormData();
-    formData.append("_id", "66d2f05bfeaa5246112183e8");
+    formData.append("_id", dataProduct?._id);
     formData.append("category_id", values.category_id);
     formData.append("productName", values.productName);
     formData.append("price", values.price);
@@ -152,6 +154,12 @@ const Editproduct = () => {
             <Form.Item name="status">
               <CommonComponent.Select options={opTionStatus} title={"Trạng thái"} placeholder="Nhập trạng thái" required />
             </Form.Item>
+            <Form.Item name="quannityTotal">
+              <CommonComponent.Input title={"Số lượng"} placeholder="Số lượng" required disabled />
+            </Form.Item>
+            <Form.Item name="vdeo">
+              <CommonComponent.Input title={"Video giói thiệu"} placeholder="thêm link vdeo" required />
+            </Form.Item>
           </div>
           <Form.Item>
             <CommonComponent.UploadImage fileList={fileList} setFileList={setFileList} />
@@ -163,6 +171,7 @@ const Editproduct = () => {
             dataSources={version}
             setDataSources={setVersion}
             optionParameter={optionParameter}
+            form={form}
           />
           <Form.Item name="content">
             <CommonComponent.CkEditorCustom setContent={setContent} content={dataProduct?.content} />

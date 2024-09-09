@@ -41,198 +41,42 @@ interface DataType {
   paymentStatus: string;
 }
 
-type FieldType = {
-  customerName?: string;
-  customerEmail?: string;
-  startTime?: string;
-  endTime?: string;
-  countryCode: string;
-  departureCode?: string;
-  destinationCode?: string;
-  orderCodeSkyfi?: string;
-  orderCodeAiralo?: string;
-  orderCodeThirdParty?: string;
-  appCode?: string;
-};
-
 interface SEARCH_PARAMS {
-  id: number;
+  id: string;
 }
 const ManagementOrderInformationEsim = () => {
-  const [isOpenSearch, setIsOpenSearch] = useState(false);
   const [searchParams, setSearchParams] = useState<SEARCH_PARAMS>();
   const location = useLocation();
 
   const params = queryString.parse(location.search);
 
-  const { filters, handleChangePage, handleAddParams, handlePagesize } = useFiltersHandler({
-    page: params?.page ? Number(params?.page) - 1 : 0,
-    size: params?.size ? Number(params?.size) : 10,
+  const { filters, handleChangePage, handlePagesize } = useFiltersHandler({
+    offset: params?.page ? (Number(params?.page) - 1) * 10 : 0,
+    limit: params?.size ? Number(params?.size) : 10,
   });
   const { data } = useGetListOrderEsim(filters, cachedKeys.listOrderEsim);
 
   const [form] = Form.useForm();
-  const values = form.getFieldsValue();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (location.search) {
       const searchs = queryString.parse(location.search);
-      setSearchParams({ id: Number(searchs.id) });
+      console.log(searchs.id, "werwer");
+      setSearchParams({ id: String(searchs.id) });
     } else {
       //@ts-ignore
       setSearchParams(null);
     }
   }, [location]);
+  console.log(searchParams, "werwer");
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: fieldsTable.customerName.label,
-      dataIndex: fieldsTable.customerName.fieldName,
-      width: 150,
-      align: "center",
-      sorter: (a: any, b: any) => a.customerName.localeCompare(b.customerName),
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-
-    {
-      title: fieldsTable.customerEmail.label,
-      dataIndex: fieldsTable.customerEmail.fieldName,
-      width: 150,
-      align: "center",
-      sorter: (a: any, b: any) => a.customerEmail.localeCompare(b.customerEmail),
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-
-    {
-      title: fieldsTable.orderCodeSkyfi.label,
-      dataIndex: fieldsTable.orderCodeSkyfi.fieldName,
-      width: 150,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-
-    {
-      title: fieldsTable.orderCodeVja2.label,
-      dataIndex: fieldsTable.orderCodeVja2.fieldName,
-      width: 120,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-    {
-      title: fieldsTable.orderCodeAiralo.label,
-      dataIndex: fieldsTable.orderCodeAiralo.fieldName,
-      width: 150,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-    {
-      title: "Mã gói cước Airalo",
-      dataIndex: "packageId",
-      width: 150,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-    {
-      title: fieldsTable.countryCode.label,
-      dataIndex: fieldsTable.countryCode.fieldName,
-      width: 100,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-
-    {
-      title: fieldsTable.departureCode.label,
-      dataIndex: fieldsTable.departureCode.fieldName,
-      width: 100,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-    {
-      title: fieldsTable.destinationCode.label,
-      dataIndex: fieldsTable.destinationCode.fieldName,
-      width: 100,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <div className=" truncate">
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          </div>
-        );
-      },
-    },
-
-    {
-      title: fieldsTable.price.label,
-      dataIndex: fieldsTable.price.fieldName,
-      width: 120,
-      align: "center",
+      title: "Tên khách hàng",
+      dataIndex: "nameCusstormer",
+      width: 200,
+      align: "left",
       render: (value: string) => {
         return (
           <Tooltip placement="topLeft" title={value}>
@@ -242,34 +86,24 @@ const ManagementOrderInformationEsim = () => {
       },
     },
     {
-      title: fieldsTable.quantity.label,
-      dataIndex: fieldsTable.quantity.fieldName,
-      width: 100,
-      align: "center",
+      title: "Giá",
+      dataIndex: "amount",
+      width: 200,
+      align: "left",
       render: (value: string) => {
         return (
           <Tooltip placement="topLeft" title={value}>
-            {value}
+            {Number(value).toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
           </Tooltip>
         );
       },
     },
     {
-      title: fieldsTable.appCode.label,
-      dataIndex: fieldsTable.appCode.fieldName,
-      width: 150,
-      align: "center",
-      render: (value: string) => {
-        return (
-          <Tooltip placement="topLeft" title={value}>
-            {value}
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: fieldsTable.createTime.label,
-      dataIndex: fieldsTable.createTime.fieldName,
+      title: "Phương thức thanh toán",
+      dataIndex: "method",
       width: 200,
       align: "center",
       render: (value: string) => {
@@ -281,60 +115,87 @@ const ManagementOrderInformationEsim = () => {
       },
     },
     {
-      title: fieldsTable.orderStatus.label,
-      dataIndex: fieldsTable.orderStatus.fieldName,
+      title: "Thời gian đặt hàng",
+      dataIndex: "createdAt",
       width: 200,
       align: "center",
-      render: (status: STATUS) => {
-        if (status === STATUS.fail) {
-          return (
-            <Tag color="#EC5656" className="tag-antd">
-              Chưa đặt hàng
-            </Tag>
-          );
-        } else if (status === STATUS.success) {
-          return (
-            <Tag color="#29CC97" className="tag-antd">
-              Đã đặt
-            </Tag>
-          );
-        } else {
-          return (
-            <Tag color="#fa9507" className="tag-antd">
-              Từ chối đơn hàng
-            </Tag>
-          );
+      render: (value: string) => {
+        return (
+          <Tooltip placement="topLeft" title={value}>
+            {value}
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "Số lượng sản phẩm",
+      dataIndex: "item",
+      width: 200,
+      align: "center",
+      render: (value: string) => {
+        return (
+          <Tooltip placement="topLeft" title={value.length}>
+            {value.length}
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "Trạng thái đơn hàng",
+      dataIndex: "status",
+      width: 200,
+      align: "center",
+      render: (value: number) => {
+        // Xác định trạng thái dựa trên giá trị
+        let displayText = "";
+        let textColor = "#000000"; // Màu chữ mặc định
+        let backgroundColor = "#ffffff"; // Màu nền mặc định
+        let borderColor = "#d9d9d9"; // Màu viền mặc định
+
+        switch (value) {
+          case 0:
+            displayText = "Đã hủy";
+            textColor = "#ffffff";
+            backgroundColor = "#ff4d4f";
+            borderColor = "#ff4d4f";
+            break;
+          case 1:
+            displayText = "Đang chờ xác nhận";
+            textColor = "#1890ff";
+            backgroundColor = "#e6f7ff";
+            borderColor = "#1890ff";
+            break;
+          case 2:
+            displayText = "Đã duyệt";
+            textColor = "#52c41a";
+            backgroundColor = "#f6ffed";
+            borderColor = "#52c41a";
+            break;
+          case 3:
+            displayText = "Đang giao hàng";
+            textColor = "#faad14";
+            backgroundColor = "#fffbe6";
+            borderColor = "#faad14";
+            break;
+          default:
         }
-      },
-    },
-    {
-      title: "Trạng thái thanh toán ",
-      dataIndex: "paymentStatus",
-      width: 200,
-      align: "center",
-      render: (status: STATUS) => {
-        if (status === 0) {
-          return (
-            <Tag color="#EC5656" className="tag-antd">
-              Chưa thanh toán
-            </Tag>
-          );
-        } else if (status === 1) {
-          return (
-            <Tag color="#29CC97" className="tag-antd">
-              Đã thanh toán
-            </Tag>
-          );
-        } else {
-          return (
-            <Tag color="#fa9507" className="tag-antd">
-              Từ chối đơn hàng
-            </Tag>
-          );
-        }
-      },
-    },
 
+        return (
+          <span
+            style={{
+              width: "200px",
+              padding: "4px 8px",
+              border: `1px solid ${borderColor}`, // Màu viền xung quanh văn bản
+              borderRadius: "4px", // Bo góc của viền văn bản
+              backgroundColor: backgroundColor, // Màu nền của văn bản
+              color: textColor, // Màu chữ của văn bản
+            }}
+          >
+            {displayText}
+          </span>
+        );
+      },
+    },
     {
       fixed: "right",
       title: "Thao tác",
@@ -344,70 +205,13 @@ const ManagementOrderInformationEsim = () => {
       render: (_, record: any) => {
         return (
           <div className="flex justify-center">
-            <iconsSvg.Eye onClick={() => navigate(`${location.pathname}?id=${record?.id}`)} />
+            <iconsSvg.Eye onClick={() => navigate(`${location.pathname}?id=${record?._id}`)} />
           </div>
         );
       },
     },
   ];
-
-  const numberRow = 5;
-
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    const body = {
-      customerName: values?.customerName ? values?.customerName.trim() : "",
-      customerEmail: values?.customerEmail ? values?.customerEmail.trim() : "",
-      orderCodeSkyfi: values?.orderCodeSkyfi ? values?.orderCodeSkyfi.trim() : "",
-      orderCodeThirdParty: values?.orderCodeThirdParty ? values?.orderCodeThirdParty.trim() : "",
-      countryCode: values?.countryCode ? values?.countryCode.trim() : "",
-      departureCode: values?.departureCode ? values?.departureCode.trim() : "",
-      destinationCode: values?.destinationCode ? values?.destinationCode.trim() : "",
-      orderCodeAiralo: values?.orderCodeAiralo ? values?.orderCodeAiralo.trim() : "",
-      //no trim
-      page: 0,
-      appCode: values?.appCode ?? "",
-      startTime: values?.startTime ? dayjs(values.startTime).format(DATE_FORMAT_V2_START) : null,
-      endTime: values.endTime ? dayjs(values.endTime).format(DATE_FORMAT_V2_END) : null,
-    };
-    handleAddParams(body);
-  };
-
-  const onClearForm = () => {
-    const convertData: any = {};
-    Object.keys(values).forEach((item) => {
-      convertData[item] = "";
-    });
-    const newData = {
-      ...convertData,
-      page: 0,
-      startTime: null,
-      endTime: null,
-    };
-    form.setFieldsValue(newData);
-    onFinish(newData);
-  };
-
-  const onExportOrder = async () => {
-    const values = form.getFieldsValue();
-    const body = {
-      ...requestBaseApi({ wsCode: WS_CODE.EXPORT_ORDER_ESIM }),
-      wsRequest: {
-        ...values,
-        startTime: values?.startTime ? moment(values.startTime).format(DATE_FORMAT_V2_START) : null,
-        endTime: values?.endTime ? moment(values.endTime).format(DATE_FORMAT_V2_END) : null,
-        page: filters.page,
-        size: filters.size,
-      },
-    };
-    try {
-      LoadingPageService.instance.current.open();
-      const res = await FileServices.exportOrderEsim(body);
-      exportFileBase64(res.data.result.wsResponse.file, "list-order");
-    } catch {
-    } finally {
-      LoadingPageService.instance.current.close();
-    }
-  };
+  console.log(searchParams, "fsdfsđf");
 
   return (
     <div>
@@ -417,91 +221,16 @@ const ManagementOrderInformationEsim = () => {
         </>
       ) : (
         <>
-          <h2 className="title-page mb-10">Tất cả đơn hàng eSim</h2>
+          <h2 className="title-page mb-10">Tất cả đơn hàng CellphoneS</h2>
           <ContainerBox>
-            <Form form={form} onFinish={onFinish}>
-              <div className="flex items-end gap-x-2">
-                {filtersSearch.map((item, index) => {
-                  return (
-                    <div className="w-[calc(100%/5-8px)]">
-                      <Form.Item key={index} name={item.name}>
-                        <CommonComponent.Input title={item.label} placeholder={item.label} />
-                      </Form.Item>
-                    </div>
-                  );
-                })}
-                <Form.Item>
-                  <Button type="primary" htmlType="submit">
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </div>
-
-              <div style={isOpenSearch ? { ...openSearchExtend } : { ...closeSearchExtend }}>
-                <div className="flex flex-wrap">
-                  <div className="w-[calc(100%/5-8px)] mr-2">
-                    <Label title={fieldsTable.appCode.label} />
-                    <Form.Item name={fieldsTable.appCode.fieldName}>
-                      <CommonComponent.SelectNoForm options={optionsAppCode} placeholder={fieldsTable.appCode.label} />
-                    </Form.Item>
-                  </div>
-                  {filtersSearchMore.map((item, index) => {
-                    return (
-                      <div className={`w-[calc(100%/5-8px)] mr-2`} style={(index + 1) % numberRow === 0 ? { marginRight: "0" } : {}}>
-                        <Form.Item key={index} name={item.name}>
-                          <CommonComponent.Input title={item.label} placeholder={item.label} />
-                        </Form.Item>
-                      </div>
-                    );
-                  })}
-                  <div className={`w-[calc(100%/5-8px)] mr-2`}>
-                    <Form.Item name={"startTime"}>
-                      <CommonComponent.DatePicker title={"Ngày bắt đầu"} placeholder={"Ngày bắt đầu"} />
-                    </Form.Item>
-                  </div>
-                  <div className={`w-[calc(100%/5-8px)]`}>
-                    <Form.Item name={"endTime"}>
-                      <CommonComponent.DatePicker title={"Ngày kết thúc"} placeholder={"Ngày kết thúc"} />
-                    </Form.Item>
-                  </div>
-                </div>
-              </div>
-              <div className="flex item-center mb-2">
-                <div className="flex items-center" onClick={() => setIsOpenSearch(!isOpenSearch)}>
-                  <div style={{ cursor: "pointer", fontWeight: 600 }}>Tìm kiếm thêm</div>
-                  <iconsSvg.ChevronDown
-                    style={
-                      !isOpenSearch
-                        ? { transform: "rotate(0deg)", transition: "all 0.5s" }
-                        : {
-                            transform: "rotate(180deg)",
-                            transition: "all 0.5s",
-                          }
-                    }
-                  />
-                </div>
-                <div onClick={onClearForm} style={{ cursor: "pointer" }} className="border border-border py-1 px-1 rounded-[4px] ml-4">
-                  Clear data
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <div className="flex w-fit gap-x-2">
-                  {CheckRoleAction([PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SYSTEMOPS]) && (
-                    <CommonComponent.ExportButton onClick={onExportOrder} />
-                  )}
-                  {CheckRoleAction([PERMISSION_ENUM.SYSTEMADMIN, PERMISSION_ENUM.SALEOPS]) && (
-                    <CommonComponent.ImportButton type={"primary"} onClick={() => navigate(BaseRoute.ImportFile)} />
-                  )}
-                </div>
-              </div>
-            </Form>
             <div className="mt-6 w-full">
               <CommonComponent.Table
                 columns={columns}
-                data={data?.orderCRMResList}
-                page={filters.page}
-                pageSize={filters.size}
-                total={data?.total ?? 20}
+                data={data?.data ?? []}
+                page={filters.offset}
+                pageSize={filters.limit}
+                //@ts-ignore
+                total={data?.totalCount < 10 ? 10 : data?.totalCount ?? 10}
                 onChangePage={(page) => handleChangePage(page)}
                 onChangePageSize={handlePagesize}
               />
@@ -514,56 +243,3 @@ const ManagementOrderInformationEsim = () => {
 };
 
 export default ManagementOrderInformationEsim;
-
-const filtersSearch = [
-  {
-    label: fieldsTable.customerName.label,
-    name: fieldsTable.customerName.fieldName,
-  },
-  {
-    label: fieldsTable.customerEmail.label,
-    name: fieldsTable.customerEmail.fieldName,
-  },
-  {
-    label: fieldsTable.orderCodeVja2.label,
-    name: fieldsTable.orderCodeVja2.fieldName,
-  },
-  {
-    label: fieldsTable.orderCodeSkyfi.label,
-    name: "orderCodeSkyfi",
-  },
-];
-
-const filtersSearchMore = [
-  // {
-  //   label: fieldsTable.appCode.label,
-  //   name: fieldsTable.appCode.fieldName,
-  // },
-  {
-    label: fieldsTable.countryCode.label,
-    name: fieldsTable.countryCode.fieldName,
-  },
-  {
-    label: fieldsTable.departureCode.label,
-    name: fieldsTable.departureCode.fieldName,
-  },
-  {
-    label: fieldsTable.destinationCode.label,
-    name: fieldsTable.destinationCode.fieldName,
-  },
-  {
-    label: fieldsTable.orderCodeAiralo.label,
-    name: fieldsTable.orderCodeAiralo.fieldName,
-  },
-];
-
-const closeSearchExtend = {
-  overflow: "hidden",
-  maxHeight: "0",
-  transition: "all 0.5s",
-};
-
-const openSearchExtend = {
-  ...closeSearchExtend,
-  maxHeight: "1000px",
-};

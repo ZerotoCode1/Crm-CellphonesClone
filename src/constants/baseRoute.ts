@@ -17,6 +17,7 @@ export const path = {
   airalo: "/airalo",
   createProduct: "/create-product",
   editProduct: "/edit-product",
+  shopManagement: "/shop-managerment",
 };
 
 export const BaseRoute = {
@@ -51,6 +52,8 @@ export const BaseRoute = {
   NewsDetail: `${path.portalManagement}/new/news-detail/:id`,
   CreateProduct: path.createProduct,
   EditProduct: path.editProduct,
+  ShopManagement: "/shop-managerment",
+
 };
 export const RouterDynamic = {
   NewsDetail: `${path.portalManagement}/new/news-detail`,
