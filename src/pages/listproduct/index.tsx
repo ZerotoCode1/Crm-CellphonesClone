@@ -124,6 +124,12 @@ const ListEsimSold = () => {
       },
     },
     {
+      title: "Số lượng",
+      dataIndex: "quannityTotal",
+      width: 200,
+      align: "center",
+    },
+    {
       title: "Mô tả",
       dataIndex: "description",
       width: 100,
@@ -187,7 +193,7 @@ const ListEsimSold = () => {
         <>
           <ContainerBox>
             <CommonComponent.Button onClick={() => navigate(BaseRoute.CreateProduct)} type="primary">
-              Thêm mới{" "}
+              Thêm mới
             </CommonComponent.Button>
             <div className="mt-6">
               <CommonComponent.Table

@@ -1,137 +1,93 @@
+import { Form, Table, TableColumnsType } from "antd";
+import PaymentService from "@/services/Payments/payment.service";
+import { useEffect, useState } from "react";
 import { CommonComponent } from "@/components/common-component";
-import { fieldsTable } from "@/constants/fieldsTable";
-import { statusMessages } from "@/constants/messages";
-import useGetDetailOrderEsim from "@/hooks/api/order-esim/useDetailOrderEsim";
-import { Form } from "antd";
-import { useEffect } from "react";
+import { DataType } from "@/components/common-component/EditTableCell";
 
 interface Props {
-  id: number;
+  id: string;
 }
 
 const DetailOrderEsim = (props: Props) => {
   const { id } = props;
-  const { dataDetail: dataDetailOrder } = useGetDetailOrderEsim(id);
+  const [data, setData] = useState<any>();
 
-  const [form] = Form.useForm();
-
+  const fetchData = async () => {
+    const res = await PaymentService.getbyId({ _id: id });
+    if (res?.data?.data[0]) {
+      setData(res?.data?.data[0]);
+    }
+  };
   useEffect(() => {
-    const setFieldValue = () => {
-      if (id) {
-        const filed = {
-          ...dataDetailOrder,
-          paymentStatus: dataDetailOrder?.paymentStatus === 1 ? statusMessages.statusPaySuccess : statusMessages.statusPayFail,
-          orderStatus: dataDetailOrder?.orderStatus === 1 ? statusMessages.statusOrderSuccess : statusMessages.statusOrderSuccess,
-        };
-        form.setFieldsValue(filed);
-      }
-    };
-    setFieldValue();
-  }, [id, form, dataDetailOrder]);
-
+    fetchData();
+  }, []);
+  const [form] = Form.useForm();
+  useEffect(() => {
+    form.setFieldsValue({
+      amount: data?.amount,
+      nameCusstormer: data?.nameCusstormer,
+      method: data?.method,
+      status: data?.status,
+    });
+  }, [data]);
+  console.log(data, "ỉuewr");
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "Màu sắc",
+      dataIndex: "keyColor",
+      key: "keyColor",
+      align: "center",
+      render: (text: string) => <a>{text}</a>,
+    },
+    {
+      title: "Ảnh sản phẩm",
+      dataIndex: "img",
+      key: "img",
+      align: "center",
+      render: (src: string) => (
+        <div className="text-center">
+          <img src={src} className="w-20 h-20 mx-auto" />
+        </div>
+      ),
+    },
+    {
+      title: "Giá sản phẩm",
+      dataIndex: "salePrice",
+      key: "salePrice",
+      align: "center",
+      render: (text: string) => <a>{text}</a>,
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      align: "center",
+      render: (text: string) => <a>{text}</a>,
+    },
+  ];
+  console.log(data?.item, "ửewrew");
   return (
     <div>
       <h2 className="title-page mb-5 ">Thông tin đơn hàng</h2>
       <Form form={form}>
-        <div className="flex flex-wrap gap-x-2">
-          {ordersInfos.map((item, index) => {
-            return (
-              <div key={index} className="w-[calc(100%/5-8px)]">
-                <Form.Item name={item.name}>
-                  <CommonComponent.Input title={item.label} readOnly />
-                </Form.Item>
-              </div>
-            );
-          })}
-        </div>
-        <div className="">
-          <h2 className="title-page mb-5">Danh sách esim</h2>
-          {dataDetailOrder?.details.map((item) => {
-            return (
-              <div className="flex flex-wrap gap-x-2 mb-8">
-                <div className="w-[calc(100%/5-8px)]">
-                  <Form.Item>
-                    <CommonComponent.Input title={fieldsTable.esimIccid.label} readOnly value={item?.esimIccid} />
-                  </Form.Item>
-                </div>
-                <div className="w-[calc(100%/5-8px)]">
-                  <Form.Item>
-                    <CommonComponent.Input title={fieldsTable.packageId.label} readOnly value={item?.packageId} />
-                  </Form.Item>
-                </div>
-                <div className="w-[calc(100%/5-8px)]">
-                  <Form.Item>
-                    <CommonComponent.Input title={fieldsTable.qrcode.label} readOnly value={item?.qrcode} />
-                  </Form.Item>
-                </div>
-                <div className="w-[calc(100%/5-8px)]">
-                  <Form.Item>
-                    <CommonComponent.Input title={fieldsTable.orderId.label} readOnly value={item?.id} />
-                  </Form.Item>
-                </div>
-                <div className="w-[calc(100%/5-8px)]">
-                  <Form.Item>
-                    <CommonComponent.Input title={fieldsTable.orderCodeAiralo.label} readOnly value={item?.orderCodeAiralo} />
-                  </Form.Item>
-                </div>
-                <div className="w-[calc(100%/5-8px)]">
-                  <img src={item.qrcodeUrl} alt="" />
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-4 gap-x-4">
+          <Form.Item name="amount">
+            <CommonComponent.Input title={"Giá đơn hàng"} placeholder="" required disabled />
+          </Form.Item>
+          <Form.Item name="nameCusstormer">
+            <CommonComponent.Input title={"Tên khách hàng"} placeholder="Nhập tên sản phẩm" required disabled />
+          </Form.Item>
+          <Form.Item name="method">
+            <CommonComponent.Input title={"Phương thức thanh toán"} placeholder="Phương thức thanh toán" required disabled />
+          </Form.Item>
+          <Form.Item name="status">
+            <CommonComponent.Input title={"Trạng thái đơn hàng"} placeholder="Trạng thái" required />
+          </Form.Item>
         </div>
       </Form>
+      <Table columns={columns} dataSource={data?.item} />;
     </div>
   );
 };
 
 export default DetailOrderEsim;
-
-const ordersInfos = [
-  {
-    name: "id",
-    label: "ID",
-  },
-  {
-    name: fieldsTable.customerName.fieldName,
-    label: fieldsTable.customerName.label,
-  },
-  {
-    name: fieldsTable.customerEmail.fieldName,
-    label: fieldsTable.customerEmail.label,
-  },
-  {
-    name: fieldsTable.orderCode.fieldName,
-    label: fieldsTable.orderCode.label,
-  },
-  {
-    name: fieldsTable.orderCodeVja2.fieldName,
-    label: fieldsTable.orderCodeVja2.label,
-  },
-
-  {
-    name: fieldsTable.price.fieldName,
-    label: fieldsTable.price.label,
-  },
-  {
-    name: fieldsTable.currency.fieldName,
-    label: fieldsTable.currency.label,
-  },
-  {
-    name: fieldsTable.appCode.fieldName,
-    label: fieldsTable.appCode.label,
-  },
-  {
-    name: fieldsTable.quantity.fieldName,
-    label: fieldsTable.quantity.label,
-  },
-  {
-    name: fieldsTable.orderStatus.fieldName,
-    label: fieldsTable.orderStatus.label,
-  },
-  {
-    name: fieldsTable.paymentStatus.fieldName,
-    label: fieldsTable.paymentStatus.label,
-  },
-];
